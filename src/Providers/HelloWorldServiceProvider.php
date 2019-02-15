@@ -15,8 +15,8 @@ class HelloWorldServiceProvider extends RouteServiceProvider
  
     public function register()
     {
- 		 $this->getApplication()->register(RouteServiceProvider::class);
-    }
+ 		$this->getApplication()->register(HelloWorldRouteServiceProvider::class);    
+ 	}
 
     public function map(Router $router)
     {
