@@ -51,7 +51,7 @@ class ContentController extends Controller
 		} else {
 		  	$xml = $response; 
 			$json = json_encode($xml);
-			$array = json_decode($json,TRUE); 
+			//$array = json_decode($json,TRUE); 
 		  //print_r(json_encode($array));exit;
 		//return $twig->render('HelloWorld::content.importProduct',['name'=>$array]);
 
@@ -60,7 +60,7 @@ class ContentController extends Controller
 
 		// render template with our data
 		return $twig->render('HelloWorld::content.importProduct',array(
-			'data' => $array
+			'data' => $json
 		));
 
 	}
