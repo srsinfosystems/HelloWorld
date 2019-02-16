@@ -52,7 +52,7 @@ class ContentController extends Controller
 		  	$xml = $response; 
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
-		  echo (json_encode($array));exit;
+		  print_r(json_encode($array));exit;
 		return $twig->render('HelloWorld::content.importProduct',$array);
 	}
 }
