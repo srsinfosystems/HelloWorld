@@ -18,8 +18,8 @@ class ContentController extends Controller
 	{
 		return $twig->render('HelloWorld::content.hello');
 	}
-	
-	public function impoertProduct(Twig $twig):string
+
+	public function importProduct(Twig $twig):string
 	{
 		return $twig->render('HelloWorld::content.importProduct');
 	}
