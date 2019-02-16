@@ -49,9 +49,9 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  	$xml = $response; 
-			$json = json_encode($xml);
-			//$array = json_decode($json,TRUE); 
+		  	
+			$arrayData = xmlToArray($response);
+			$json = json_encode($arrayData); 
 		  //print_r(json_encode($array));exit;
 		//return $twig->render('HelloWorld::content.importProduct',['name'=>$array]);
 
