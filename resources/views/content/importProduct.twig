@@ -3,7 +3,7 @@
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml",
+  CURLOPT_URL => "www.brandsdistribution.com/restful/export/api/products.xml?Accept=application/xml",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -13,8 +13,7 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTPHEADER => array(
     "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
     "cache-control: no-cache",
-    "content-type: application/xml",
-    "postman-token: e9c5b44c-1b08-8bdd-f17d-16e46530d607"
+    "content-type: application/xml"
   ),
 ));
 
