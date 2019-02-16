@@ -1,9 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "www.brandsdistribution.com/restful/export/api/products.xml?Accept=application/xml",
+  CURLOPT_URL => "http://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_26=kids",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -13,7 +17,7 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTPHEADER => array(
     "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
     "cache-control: no-cache",
-    "content-type: application/xml"
+    "content-type: application/xml",
   ),
 ));
 
@@ -25,5 +29,9 @@ curl_close($curl);
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
-  echo $response;
+  // echo $response;
+$xml = $response; 
+  $json = json_encode($xml); // convert the XML string to JSON
+$array = json_decode($json,TRUE); // convert the JSON-encoded string to a PHP variable
+print_r($array);
 }
