@@ -21,9 +21,7 @@ class ContentController extends Controller
 
 	public function importProduct(Twig $twig):string
 	{
-		ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);
+		
 
 
 		$curl = curl_init();
@@ -54,7 +52,7 @@ class ContentController extends Controller
 		  	$xml = $response; 
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
-		  print_r(json_encode($array));exit;
+		  echo (json_encode($array));exit;
 		return $twig->render('HelloWorld::content.importProduct',$array);
 	}
 }
