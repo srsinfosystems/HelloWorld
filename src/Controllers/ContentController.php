@@ -56,10 +56,10 @@ class ContentController extends Controller
 		//return $twig->render('HelloWorld::content.importProduct',['name'=>$array]);
 
 		// load template
-		$tpl = $twig->loadTemplate('HelloWorld::content.importProduct');
+		//$tpl = $twig->load('HelloWorld::content.importProduct');
 
 		// render template with our data
-		echo $tpl->render(array(
+		return $twig->render('HelloWorld::content.importProduct',array(
 			'data' => $array
 		));
 
