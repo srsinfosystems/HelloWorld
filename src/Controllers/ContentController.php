@@ -21,7 +21,7 @@ class ContentController extends Controller
 
 	public function importProduct(Twig $twig):string
 	{
-		$login = $this->login();
+			$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		
@@ -46,6 +46,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
+		  CURLOPT_TIMEOUT: 300,
 		));
 
 		$response = curl_exec($curl);
