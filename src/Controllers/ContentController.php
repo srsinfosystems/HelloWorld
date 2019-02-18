@@ -21,8 +21,9 @@ class ContentController extends Controller
 
 	public function importProduct(Twig $twig):string
 	{
-		$Items = $this->getAllItems();
-		$storeItemsToPlenty = $this->storeItemsToPlanty($Items);
+		//$Items = $this->getAllItems();
+		$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
+		$storeItemsToPlenty = $this->storeItemsToPlanty($Item);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems(){
