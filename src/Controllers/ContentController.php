@@ -3,9 +3,7 @@ namespace HelloWorld\Controllers;
 
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Templates\Twig;
-use Automattic\WooCommerce\HttpClient\HttpClientException;
-require __DIR__ . '/vendor/autoload.php';
-use Automattic\WooCommerce\Client;
+
 /**
  * Class ContentController
  * @package HelloWorld\Controllers
@@ -18,9 +16,7 @@ class ContentController extends Controller
 	 */
 	public function sayHello(Twig $twig):string
 	{
-		$results = $woocommerce->get('brands');
-  	
-		return $twig->render('HelloWorld::content.hello', array('data' => $results));
+		return $twig->render('HelloWorld::content.hello');
 	}
 
 	public function importProduct(Twig $twig):string
@@ -50,7 +46,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
-		  CURLOPT_TIMEOUT=> 900000
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -120,6 +116,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
