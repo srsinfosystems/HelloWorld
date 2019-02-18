@@ -18,7 +18,7 @@ class ContentController extends Controller
 	{
 		$results = $woocommerce->get('brands');
   	
-		return $twig->render('HelloWorld::content.hello', ,array('data' => $results));
+		return $twig->render('HelloWorld::content.hello', array('data' => $results));
 	}
 
 	public function importProduct(Twig $twig):string
