@@ -27,8 +27,8 @@ class ContentController extends Controller
 		
 		$Items = $this->getAllItems();
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
+		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems(){
 		$curl = curl_init();
