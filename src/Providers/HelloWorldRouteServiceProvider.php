@@ -17,7 +17,7 @@ class HelloWorldRouteServiceProvider extends RouteServiceProvider
 	{
 		$router->get('home', 'HelloWorld\Controllers\ContentController@home');
 
-		$router->get('hello', 'HelloWorld\Controllers\ContentController@sayHello');
+		$router->get('callApi', 'HelloWorld\Controllers\ContentController@sayHello');
 		
 		$router->get('importProduct', 'HelloWorld\Controllers\ContentController@importProduct');
 	}
