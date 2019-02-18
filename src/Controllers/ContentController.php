@@ -3,7 +3,7 @@ namespace HelloWorld\Controllers;
 
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Templates\Twig;
-
+use Automattic\WooCommerce\HttpClient\HttpClientException;
 /**
  * Class ContentController
  * @package HelloWorld\Controllers
@@ -16,7 +16,9 @@ class ContentController extends Controller
 	 */
 	public function sayHello(Twig $twig):string
 	{
-		return $twig->render('HelloWorld::content.hello');
+		$results = $woocommerce->get('brands');
+  	
+		return $twig->render('HelloWorld::content.hello', ,array('data' => $results));
 	}
 
 	public function importProduct(Twig $twig):string
