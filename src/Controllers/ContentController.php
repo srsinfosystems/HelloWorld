@@ -46,7 +46,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
-		  CURLOPT_TIMEOUT=> 90000
+		  CURLOPT_TIMEOUT=> 0
 		));
 
 		$response = curl_exec($curl);
