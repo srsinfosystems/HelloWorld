@@ -22,17 +22,17 @@ class ContentController extends Controller
 	public function importProduct(Twig $twig):string
 	{
 		$login = $this->login();
-		print_r($login);exit;
+		// echo $login;exit;
 		//$Items = $this->getAllItems();
-		$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-		$storeItemsToPlenty = $this->storeItemsToPlanty($Item);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
+		// $Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
+		// $storeItemsToPlenty = $this->storeItemsToPlanty($Item);
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $login));
 	}
 	public function getAllItems(){
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml",
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_26=women",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -58,7 +58,7 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
-			$categoryArray = array("74"=>"Men", "33"=>"Women", "32"=>"Accessories", "31"=>"Top Trending", "29"=>"Sales", "154"=>"Other", "118"=>"By Brand")
+			$categoryArray = array("74"=>"Men", "33"=>"Women", "32"=>"Accessories", "31"=>"Top Trending", "29"=>"Sales", "154"=>"Other", "118"=>"By Brand");
 			//return $twig->render('HelloWorld::content.importProduct',array('data' => $json));
 
 		  $i=0;
