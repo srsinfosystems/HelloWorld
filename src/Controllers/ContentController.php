@@ -14,6 +14,10 @@ class ContentController extends Controller
 	 * @param Twig $twig
 	 * @return string
 	 */
+	public function index(){
+		return $twig->render('HelloWorld::content.mainView');
+
+	}
 	public function sayHello(Twig $twig):string
 	{
 		return $twig->render('HelloWorld::content.hello');
@@ -34,7 +38,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_26=women",
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=Puma",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
