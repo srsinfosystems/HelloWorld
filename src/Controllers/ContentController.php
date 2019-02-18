@@ -22,9 +22,9 @@ class ContentController extends Controller
 	public function importProduct(Twig $twig):string
 	{
 		$login = $this->login();
-		// echo $login->token_type;
-		$access_token = $login->access_token;
-		// echo $login;exit;
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		
 		$Items = $this->getAllItems();
 		$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Item, $access_token);
