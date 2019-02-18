@@ -21,6 +21,7 @@ class ContentController extends Controller
 
 	public function importProduct(Twig $twig):string
 	{
+		set_time_limit(0);
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
