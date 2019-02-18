@@ -22,11 +22,13 @@ class ContentController extends Controller
 	public function importProduct(Twig $twig):string
 	{
 		$login = $this->login();
+		// echo $login->token_type;
+		$access_token = $login->access_token;
 		// echo $login;exit;
-		//$Items = $this->getAllItems();
-		// $Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-		// $storeItemsToPlenty = $this->storeItemsToPlanty($Item);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $login));
+		$Items = $this->getAllItems();
+		$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
+		$storeItemsToPlenty = $this->storeItemsToPlanty($Item, $access_token);
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems(){
 		$curl = curl_init();
@@ -88,7 +90,7 @@ class ContentController extends Controller
 
 		}
 	}
-	public function storeItemsToPlanty($Items){
+	public function storeItemsToPlanty($Items, $access_token){
 	
 		$curl = curl_init();
 
@@ -102,10 +104,9 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => $Items,
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjU5Y2EzOGZkN2M2YWQwYzAxMWE5OTE3YmFkNWM0OTE3ZGU3MjcwZWIyYmIzZjA2ZWFkNmY2MzQ4ODAzNTY1MmExNjJhYWZmMGZjMzk5MTdlIn0.eyJhdWQiOiIxIiwianRpIjoiNTljYTM4ZmQ3YzZhZDBjMDExYTk5MTdiYWQ1YzQ5MTdkZTcyNzBlYjJiYjNmMDZlYWQ2ZjYzNDg4MDM1NjUyYTE2MmFhZmYwZmMzOTkxN2UiLCJpYXQiOjE1NTA0NzIwMDMsIm5iZiI6MTU1MDQ3MjAwMywiZXhwIjoxNTUwNTU4NDAzLCJzdWIiOiI2Iiwic2NvcGVzIjpbIioiXX0.ummFx9nvLbmbfRcKmi-G7dIXVxKpQH5MhAXXKhqVv4mXbMYlLxCjeBgxKcYewbAatomCcEz4twDAPU30AmLkA2iOyGehfGgL1I8w8kX1xr8-Xelz7ISYe9dBfzRf25zhrYrAe7emDbAgk-TVn6NOF_2Ic7zBNIiFKoaYM18G7-WEEZUZ6AKut1KSNineyUELsA69QQRDP0iG7QbfHvgOhx5XMg0KIUhG7l28oBv693SjSXr85ELI6gWJeVifnIY7T2mr7-qDfgVjj0mQw5H_u0-zO_R6tKfC_809KVASBXCBemGlGpLn8NMyfXGqFTPQi-myBgs2yOeSmBs0YUvTpOQFJAMT9gX0gMJARytDOTeVk_YO1siNppFrpL95fTEh8TpAVp9fvOP2uUyfWFV2DXgQR2_6i7shgjW-URAFGc6ZBGztk84sn_M38gCzaDDiLYHRDGf8ZpxGCRYreXOwNSzVaOPOIW0oV5VSbbZB29oKb5RIo4CVcFS6aka7jmr9yV9q2I2EbU6KV17Elm4wRbhbfIN1y75Gtosw77rESry3z8qk4F1R4evG_5m3kgmtK4PDx5Sr052I8_MdVYgO0Qi9Gr8evjcpZ718FYaBNGpwbIfyw8OYzXE7torJCkKL_6QmW3ht1Applr4YB-nEbK80lE7lnYqQ-JiAeU6gIxs",
+		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
-		    "content-type: application/json",
-		    "postman-token: 1e6ea49e-1d39-d2e4-bdd6-ae2cdbd08c04"
+		    "content-type: application/json"
 		  ),
 		));
 
