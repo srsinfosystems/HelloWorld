@@ -26,8 +26,8 @@ class ContentController extends Controller
 		$access_token = $login['access_token'];
 		
 		$Items = $this->getAllItems();
-		$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-		$storeItemsToPlenty = $this->storeItemsToPlanty($Item, $access_token);
+		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
+		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems(){
@@ -60,22 +60,29 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
-			$categoryArray = array("74"=>"Men", "33"=>"Women", "32"=>"Accessories", "31"=>"Top Trending", "29"=>"Sales", "154"=>"Other", "118"=>"By Brand");
-			//return $twig->render('HelloWorld::content.importProduct',array('data' => $json));
-
+			$categoryArray = array("men", "women");
+			
 		  $i=0;
 	      $products = array();      
-	      // echo "<pre>";
 	      foreach ($array as  $value) {  
-	        // print_r($value['item']);
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
 	          $products[$sr]['id'] = $item['id'];
 	          $products[$sr]['name'] = $item['name'];
 	          foreach ($item['tags']['tag'] as $category) {
+	          	if ($category['name'] == 'gender') {
+	          		if ($category['value']['value'] == 'men') {
+	          			$categoryId = 74;
+	          		}else if ($category['value']['value'] == 'women') {
+	          			$categoryId = 33;
+	          		}else{
+	          			$categoryId = 154; //other category
+	          		}
+	          	}
 	            if ($category['name'] == 'category') {
+	            	
 	             //$products[$sr]['categories'][] = $category['value']['value'];
-	              $categories = array("categoryId"=>33);
+	              $categories = array("categoryId"=>$categoryId);
 	             $products[$sr]['categories'][] = $categories;
 	            }
 	            
@@ -85,7 +92,7 @@ class ContentController extends Controller
 	        }        
 	        
 	        $i++;
-	      } //exit;
+	      } 
 	      return (json_encode($products));
 
 		}
