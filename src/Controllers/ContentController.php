@@ -14,7 +14,7 @@ class ContentController extends Controller
 	 * @param Twig $twig
 	 * @return string
 	 */
-	public function index(Twig $twig):string
+	public function home(Twig $twig):string
 	{
 		return $twig->render('HelloWorld::content.mainView');
 
