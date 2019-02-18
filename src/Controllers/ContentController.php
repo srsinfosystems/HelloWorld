@@ -4,6 +4,8 @@ namespace HelloWorld\Controllers;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Templates\Twig;
 use Automattic\WooCommerce\HttpClient\HttpClientException;
+require __DIR__ . '/vendor/autoload.php';
+use Automattic\WooCommerce\Client;
 /**
  * Class ContentController
  * @package HelloWorld\Controllers
@@ -48,7 +50,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
-		  CURLOPT_TIMEOUT=> 0
+		  CURLOPT_TIMEOUT=> 900000
 		));
 
 		$response = curl_exec($curl);
