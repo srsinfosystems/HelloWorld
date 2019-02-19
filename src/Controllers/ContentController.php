@@ -175,7 +175,8 @@ class ContentController extends Controller
 		  return $response;
 		}
 	}
-	public function stockManagement(){
+	public function stockManagement(Twig $twig):string
+	{
 		$pageNo = 1;
 		$records = array();
 		$response = $this->updateStock($pageNo);
