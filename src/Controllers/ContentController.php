@@ -34,20 +34,17 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		echo $brand = $_GET['brand'];
+		 $brand = $_GET['brand'];
 		
 		
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
-		echo "login";
 		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-		echo "after items";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		echo "after store";
-		header('Location: /home?message=success');
-		//return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
+		// header('Location: /home?message=success');
+		return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
