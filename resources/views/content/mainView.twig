@@ -32,7 +32,7 @@
 				//alert(brand);
 				$.ajax({
 					type: 'post',
-					url: 'content/importProduct',
+					url: 'importProduct',
 					data: $('#StoreItems').serialize() ,
 					success: function(){
 						$('.alert-success').css('display','block');
