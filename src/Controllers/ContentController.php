@@ -16,7 +16,13 @@ class ContentController extends Controller
 	 */
 	public function home(Twig $twig):string
 	{
-		return $twig->render('HelloWorld::content.mainView');
+		$message = $_GET['message'];
+		if (!empty($message)) {
+			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
+		}else{
+			echo "Error while saving items";exit;
+		}
+		
 
 	}
 	public function sayHello(Twig $twig):string
@@ -38,8 +44,8 @@ class ContentController extends Controller
 		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-				 
-		return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
+		header('Location: /home?message=success');
+		//return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
