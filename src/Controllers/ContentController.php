@@ -16,6 +16,7 @@ class ContentController extends Controller
 	 */
 	public function home(Twig $twig):string
 	{
+		echo $_SERVER; 
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
@@ -43,7 +44,6 @@ class ContentController extends Controller
 		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		// header('Location: /home?message=success');
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems($brand){
