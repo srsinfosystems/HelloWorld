@@ -48,7 +48,7 @@
 				<tr>
 				<td colspan="10">				
 				{% for i in range(1, data.lastPageNumber) %}
-				<a class="btn" onclick="getstock( {{ i }} );" >{{ i }}</a>
+				<a class="btn btn-default" onclick="getstock( {{ i }} );" >{{ i }}</a>
 				{% endfor %}
 				</td>
 				</tr>
@@ -61,7 +61,7 @@
 		
 		$.ajax({
 			'type': 'get',
-			'url': '/Content/updateStock/'+pageNo,
+			'url': '/updateStock/'+pageNo,
 			success: function(result){
 				console.log(result);
 			}
