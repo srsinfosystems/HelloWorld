@@ -176,14 +176,40 @@ class ContentController extends Controller
 		  return $response;
 		}
 	}
-	public function updateStock(){
+	public function stockManagement(){
+		$pageNo = 1;
+		$records = array();
+		$response = $this->updateStock($pageNo);
+		$array = json_decode($response,TRUE); 
+		$pageNo = $array['page'] + 1;
+		$lastPageNumber = $array['lastPageNumber'];
+		$isLastPage = $array['isLastPage'];
+		$records = $array['entries'];
+		// array_push($records,$array['entries']);
+		/*if ($pageNo > 1) {
+			for ($i=$pageNo; $i < $lastPageNumber; $i++) { 
+				$response = $this->updateStock($i);
+				$array2 = json_decode($response,TRUE); 
+				$pageNo = $array2['page'] + 1;
+				$lastPageNumber = $array2['lastPageNumber'];
+				$isLastPage = $array2['isLastPage'];
+				array_push($records,$array2['entries']);
+			}
+			
+		}else{
+
+		}*/
+		return $twig->render('HelloWorld::content.updateStock',array('data' => $response));
+		
+	}
+	public function updateStock($pageNo){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?page=1&warehouseId=104",
+		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?page=".$pageNo."&warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -191,7 +217,7 @@ class ContentController extends Controller
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		    "postman-token: 8a2c3500-dd2e-6ac7-cc50-637991e0222e"
@@ -202,16 +228,12 @@ class ContentController extends Controller
 
 		$err = curl_error($curl);
 
-		curl_close($curl);
-
-		var_dump($err);
-		var_dump($response);
-		exit;
+		curl_close($curl);		
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  return $response;
 		}
 	}
 }
