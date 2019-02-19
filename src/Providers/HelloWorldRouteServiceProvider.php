@@ -21,7 +21,7 @@ class HelloWorldRouteServiceProvider extends RouteServiceProvider
 		
 		$router->get('importProduct', 'HelloWorld\Controllers\ContentController@importProduct');
 		
-		$router->get('StockUpdate', 'HelloWorld\Controllers\ContentController@stockManagement');
+		$router->get('stockManagement', 'HelloWorld\Controllers\ContentController@stockManagement');
 	}
 
 }
