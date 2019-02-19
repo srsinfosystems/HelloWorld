@@ -27,8 +27,10 @@ class ContentController extends Controller
 	public function importProduct()
 	{
 		//echo $_REQUEST;
-		echo "====";
-		echo 'php://input';
+		
+		$brand = $_GET['brand'];
+		
+		echo $brand;
 		exit;
 		$login = $this->login();
 		$login = json_decode($login, true);

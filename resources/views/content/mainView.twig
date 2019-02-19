@@ -13,7 +13,7 @@
 </div>
 	<div class="row">
 		<div class="col-md-6">
-			<form id="StoreItems" type="post" >
+			<form id="StoreItems" type="get" action="/importProduct">
 			 <fieldset>
 			  <legend>Create Items :</legend>
 			  Brand: <input type="text" name="brand" >
@@ -24,24 +24,24 @@
 		<div class="col-md-6"></div>
 	</div>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$('.alert-success').css("display","none");
+		// $(document).ready(function(){
+		// 	$('.alert-success').css("display","none");
 			
-			$('#StoreItems').submit(function(e){
-				e.preventDefault();
-				var brand = $('input[name="brand"]').val();
-				//alert(brand);
-				$.ajax({
-					type: 'post',
-					url: 'content/importProduct',
-					data: $('#StoreItems').serialize() ,
-					success: function(){
-						$('.alert-success').css('display','block');
+		// 	$('#StoreItems').submit(function(e){
+		// 		e.preventDefault();
+		// 		var brand = $('input[name="brand"]').val();
+		// 		//alert(brand);
+		// 		$.ajax({
+		// 			type: 'get',
+		// 			url: 'content/importProduct',
+		// 			data: $('#StoreItems').serialize() ,
+		// 			success: function(){
+		// 				$('.alert-success').css('display','block');
 
-					}
-				});
-			})
-		})
+		// 			}
+		// 		});
+		// 	})
+		// })
 	</script>
 </body>
 </html>
