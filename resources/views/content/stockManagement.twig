@@ -8,10 +8,10 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-{{ data }}
+<!-- {{ data }} -->
 <div class="row">
-	<div>
-		<table class="table">
+	<div class="table-responsive">
+		<table class="table table-hover table-sm table-striped table-bordered">
 			<thead>
 				<tr>
 					<td>itemId</td>
@@ -29,8 +29,8 @@
 			</thead>
 			<tbody>
 				{% for key,value in data.entries %}
-				    Key : {{ key }}
-				    Value : {{ value }}
+				    <!-- Key : {{ key }}
+				    Value : {{ value }} -->
 			    <tr>
 					<td>{{ value.itemId }}</td>
 					<td>{{ value.warehouseId }}</td>
@@ -45,11 +45,21 @@
 					<td>{{ value.updatedAt }}</td>
 				</tr>
 				{% endfor %}
-				
+				<tr>
+				<td colspan="10">
+				{% for key,value in data.lastPageNumber %}
+				<a class="btn" onclick="getstock({{ key }});" >{{ key }}</a>
+				{% endfor %}
+				</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
-
+<script type="text/javascript">
+	function getstock(pageNo){
+		alert(pageNo);
+	}
+</script>
 </body>
 </html>
