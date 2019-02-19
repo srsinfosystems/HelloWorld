@@ -46,9 +46,9 @@
 				</tr>
 				{% endfor %}
 				<tr>
-				<td colspan="10">
-				{% for key,value in data.lastPageNumber %}
-				<a class="btn" onclick="getstock( {{ key }} );" >{{ key }}</a>
+				<td colspan="10">				
+				{% for i in range(1, data.lastPageNumber) %}
+				<a class="btn" onclick="getstock( {{ i }} );" >{{ i }}</a>
 				{% endfor %}
 				</td>
 				</tr>
