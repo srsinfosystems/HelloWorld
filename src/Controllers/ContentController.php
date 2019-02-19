@@ -24,7 +24,7 @@ class ContentController extends Controller
 		return $twig->render('HelloWorld::content.mainView');
 	}
 
-	public function importProduct()
+	public function importProduct(Twig $twig):string
 	{
 		//echo $_REQUEST;
 		
