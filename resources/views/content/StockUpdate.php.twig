@@ -1,5 +1,45 @@
 {{ data }}
 {% include 'header.html' %}
-<div></div>
+<div class="row">
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<td>itemId</td>
+					<td>warehouseId</td>
+					<td>stockPhysical</td>
+					<td>reservedStock</td>
+					<td>reservedEbay</td>
+					<td>reorderDelta</td>
+					<td>stockNet</td>
+					<td>reordered</td>
+					<td>reservedBundle</td>
+					<td>averagePurchasePrice</td>
+					<td>updatedAt</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for key,value in data.entries %}
+				    Key : {{ key }}
+				    Value : {{ value }}
+			    <tr>
+					<td>{{ value.itemId }}</td>
+					<td>{{ value.warehouseId }}</td>
+					<td>{{ value.stockPhysical }}</td>
+					<td>{{ value.reservedStock }}</td>
+					<td>{{ value.reservedEbay }}</td>
+					<td>{{ value.reorderDelta }}</td>
+					<td>{{ value.stockNet }}</td>
+					<td>{{ value.reordered }}</td>
+					<td>{{ value.reservedBundle }}</td>
+					<td>{{ value.averagePurchasePrice }}</td>
+					<td>{{ value.updatedAt }}</td>
+				</tr>
+				{% endfor %}
+				
+			</tbody>
+		</table>
+	</div>
+</div>
 
 {% include 'footer.html' %}
