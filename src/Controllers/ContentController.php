@@ -26,8 +26,8 @@ class ContentController extends Controller
 
 	public function importProduct()
 	{
-		var_dump($_REQUEST);
-var_dump('php://input');
+		//var_dump($_REQUEST);
+		var_dump('php://input');
 		exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
