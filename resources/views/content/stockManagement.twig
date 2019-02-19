@@ -58,10 +58,10 @@
 </div>
 <script type="text/javascript">
 	function getstock(pageNo){
-		alert(pageNo);
+		
 		$.ajax({
 			'type': 'get',
-			'url': '/content/updateStock/'+pageNo,
+			'url': '/Content/updateStock/'+pageNo,
 			success: function(result){
 				console.log(result);
 			}
