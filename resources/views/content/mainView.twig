@@ -8,12 +8,15 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div class="alert alert-success">
+  <strong>Success!</strong> Items created successfully.
+</div>
 	<div class="row">
 		<div class="col-md-6">
 			<form id="StoreItems">
 			 <fieldset>
 			  <legend>Create Items :</legend>
-			  Brand: <input type="text">
+			  Brand: <input type="text" name="brand" >
 			  <input type="submit" class="btn btn-success" value="submit" />
 			 </fieldset>
 			</form>
@@ -22,8 +25,19 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			$('.alert-success').css("display","none");
 			$('#StoreItems').submit(function(){
-				alert("hiiii");
+				var brand = $('input[name="brand"]').val();
+				alert(brand);
+				$.ajax({
+					type: 'post',
+					url: "Content/importProduct",
+					data: {brand: brand} ,
+					success: function(){
+						$('.alert-success').css("display","block");
+
+					}
+				});
 			})
 		})
 	</script>

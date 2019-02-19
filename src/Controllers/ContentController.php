@@ -26,6 +26,7 @@ class ContentController extends Controller
 
 	public function importProduct(Twig $twig):string
 	{
+		echo $twig;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
@@ -33,7 +34,11 @@ class ContentController extends Controller
 		$Items = $this->getAllItems();
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
+		if ($storeItemsToPlenty) {
+			return "Success";
+		}
+		 
+		//return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
 	}
 	public function getAllItems(){
 		$curl = curl_init();
