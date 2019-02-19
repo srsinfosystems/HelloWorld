@@ -179,7 +179,7 @@ class ContentController extends Controller
 	{
 		$pageNo = 1;
 		$records = array();
-		$response = $this->updateStock($pageNo);
+		$response = $this->updateStock();
 		$array = json_decode($response,TRUE); 
 		$pageNo = $array['page'] + 1;
 		$lastPageNumber = $array['lastPageNumber'];
@@ -202,14 +202,14 @@ class ContentController extends Controller
 		return $twig->render('HelloWorld::content.stockManagement',array('data' => $array));
 		
 	}
-	public function updateStock($pageNo){
+	public function updateStock($pageNo=null){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$curl = curl_init();
-
+		$pageNoString = "page=".$pageNo;
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?page=".$pageNo."&warehouseId=104",
+		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?".$pageNoString."&warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
