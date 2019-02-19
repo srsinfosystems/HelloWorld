@@ -16,7 +16,7 @@ class ContentController extends Controller
 	 */
 	public function home(Twig $twig):string
 	{
-		echo $_SERVER['SERVER_NAME']; 
+		//echo $_SERVER['SERVER_NAME']; 
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
@@ -199,7 +199,8 @@ class ContentController extends Controller
 		}else{
 
 		}*/
-		return $twig->render('HelloWorld::content.updateStock',array('data' => $response));
+		$this->load->view('mainView');
+		//return $twig->render('HelloWorld::content.StockUpdate',array('data' => $response));
 		
 	}
 	public function updateStock($pageNo){
