@@ -198,8 +198,8 @@ class ContentController extends Controller
 		}else{
 
 		}*/
-		$this->load->view('mainView');
-		//return $twig->render('HelloWorld::content.StockUpdate',array('data' => $response));
+		// $this->load->view('mainView');
+		return $twig->render('HelloWorld::content.StockUpdate',array('data' => $response));
 		
 	}
 	public function updateStock($pageNo){
