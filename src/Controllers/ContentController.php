@@ -199,7 +199,7 @@ class ContentController extends Controller
 		}else{
 
 		}*/
-		return $twig->render('HelloWorld::content.stockManagement',array('data' => $response));
+		return $twig->render('HelloWorld::content.stockManagement',array('data' => $array));
 		
 	}
 	public function updateStock($pageNo){
