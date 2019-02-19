@@ -26,7 +26,7 @@ class ContentController extends Controller
 
 	public function importProduct()
 	{
-		echo $_REQUEST;
+		//echo $_REQUEST;
 		echo "====";
 		echo 'php://input';
 		exit;
