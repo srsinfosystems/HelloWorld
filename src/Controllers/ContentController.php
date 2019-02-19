@@ -20,7 +20,7 @@ class ContentController extends Controller
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
 		}else{
-			echo "Error while saving items";exit;
+			return $twig->render('HelloWorld::content.mainView');
 		}
 		
 
