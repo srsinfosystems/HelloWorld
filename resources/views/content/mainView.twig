@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title></title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-</head>
-<body>
+{% include 'header.html' %}
 <!-- <div class="alert alert-success">
   <strong>Success!</strong> Items created successfully.
 </div> -->
@@ -24,9 +15,8 @@
 
 			<form id="scockManagement" type="get" action="/stockManagement">
 			 <fieldset>
-			  <legend>Update Stock :</legend>
-			  Brand: <input type="text" name="brand" >
-			  <input type="submit" class="btn btn-success" value="submit" />
+			  <legend>Update Stock :</legend>			  
+			  <input type="submit" class="btn btn-success" value="Update" />
 			 </fieldset>
 			</form>
 		</div>
@@ -52,5 +42,4 @@
 		// 	})
 		// })
 	</script>
-</body>
-</html>
+{% include 'footer.html' %}
