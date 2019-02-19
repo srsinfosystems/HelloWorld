@@ -8,9 +8,11 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<?php if(!empty($storeItemsToPlenty)){ ?>
 <div class="alert alert-success">
   <strong>Success!</strong> Items created successfully.
 </div>
+<?php } ?>
 	<div class="row">
 		<div class="col-md-6">
 			<form id="StoreItems" type="get" action="/importProduct">

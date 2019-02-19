@@ -30,26 +30,22 @@ class ContentController extends Controller
 		
 		$brand = $_GET['brand'];
 		
-		echo $brand;
-		exit;
+		
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		
-		$Items = $this->getAllItems();
+		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		if ($storeItemsToPlenty) {
-			return "Success";
-		}
-		 
-		//return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
+				 
+		return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
 	}
-	public function getAllItems(){
+	public function getAllItems($brand){
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=Puma",
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=$brand",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
