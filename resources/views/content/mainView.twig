@@ -13,7 +13,7 @@
 </div>
 	<div class="row">
 		<div class="col-md-6">
-			<form id="StoreItems">
+			<form id="StoreItems" type="post" >
 			 <fieldset>
 			  <legend>Create Items :</legend>
 			  Brand: <input type="text" name="brand" >
@@ -27,13 +27,14 @@
 		$(document).ready(function(){
 			$('.alert-success').css("display","none");
 			var path = "{{ path('content.importProduct') }}";
-			$('#StoreItems').submit(function(){
+			$('#StoreItems').submit(function(e){
+				e.preventDefault();
 				var brand = $('input[name="brand"]').val();
 				//alert(brand);
 				$.ajax({
 					type: 'post',
 					url: path,
-					data: {brand: brand} ,
+					data: $('#StoreItems').serialize() ,
 					success: function(){
 						$('.alert-success').css('display','block');
 
