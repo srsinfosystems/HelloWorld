@@ -16,7 +16,6 @@ class ContentController extends Controller
 	 */
 	public function home(Twig $twig):string
 	{
-		//echo $_SERVER['SERVER_NAME']; 
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
