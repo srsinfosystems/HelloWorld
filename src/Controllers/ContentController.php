@@ -150,7 +150,7 @@ class ContentController extends Controller
 	public function login(){
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://f0d711a79f1ef14d0aa44fada04b3451c8d936d2.plentymarkets-cloud-ie.com/rest/login",
+		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/login",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
