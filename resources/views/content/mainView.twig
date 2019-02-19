@@ -33,7 +33,7 @@
 				//alert(brand);
 				$.ajax({
 					type: 'post',
-					url: {{ url('content.importProduct') }},
+					url: {{ url('controller.content.importProduct') }},
 					data: $('#StoreItems').serialize() ,
 					success: function(){
 						$('.alert-success').css('display','block');
