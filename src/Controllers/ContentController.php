@@ -16,7 +16,7 @@ class ContentController extends Controller
 	 */
 	public function home(Twig $twig):string
 	{
-		echo $_SERVER; 
+		echo $_SERVER['SERVER_NAME']; 
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
@@ -174,6 +174,44 @@ class ContentController extends Controller
 		  return "cURL Error #:" . $err;
 		} else {
 		  return $response;
+		}
+	}
+	public function updateStock(){
+		$login = $this->login();
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://07adb5fd142e0c1c833bd912a158fa7a8750ee4e.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?page=1&warehouseId=104",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json",
+		    "postman-token: 8a2c3500-dd2e-6ac7-cc50-637991e0222e"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		var_dump($err);
+		var_dump($response);
+		exit;
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  echo $response;
 		}
 	}
 }
