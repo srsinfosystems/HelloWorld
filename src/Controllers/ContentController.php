@@ -34,16 +34,18 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		$brand = $_GET['brand'];
+		echo $brand = $_GET['brand'];
 		
 		
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
-		
+		echo "login";
 		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
+		echo "after items";
 		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
+		echo "after store";
 		header('Location: /home?message=success');
 		//return $twig->render('HelloWorld::content.mainView',array('data' => $storeItemsToPlenty));
 	}
@@ -51,7 +53,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=$brand",
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
