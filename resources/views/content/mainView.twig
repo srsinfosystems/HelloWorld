@@ -29,7 +29,7 @@
 			var path = "{{ path('content.importProduct') }}";
 			$('#StoreItems').submit(function(){
 				var brand = $('input[name="brand"]').val();
-				alert(brand);
+				//alert(brand);
 				$.ajax({
 					type: 'post',
 					url: path,

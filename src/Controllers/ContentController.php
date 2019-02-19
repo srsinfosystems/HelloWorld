@@ -26,7 +26,7 @@ class ContentController extends Controller
 
 	public function importProduct(Request $request)
 	{
-		print_r($request);exit;
+		echo $request;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
