@@ -24,9 +24,11 @@ class ContentController extends Controller
 		return $twig->render('HelloWorld::content.mainView');
 	}
 
-	public function importProduct(Request $request)
+	public function importProduct()
 	{
-		echo $request;exit;
+		var_dump($_REQUEST);
+var_dump('php://input');
+		exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
