@@ -26,15 +26,16 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$('.alert-success').css("display","none");
+			var path = "{{ path('content.importProduct') }}";
 			$('#StoreItems').submit(function(){
 				var brand = $('input[name="brand"]').val();
 				alert(brand);
 				$.ajax({
 					type: 'post',
-					url: "Content/importProduct",
+					url: path,
 					data: {brand: brand} ,
 					success: function(){
-						$('.alert-success').css("display","block");
+						$('.alert-success').css('display','block');
 
 					}
 				});
