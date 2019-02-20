@@ -207,12 +207,12 @@ class ContentController extends Controller
 		$access_token = $login['access_token'];
 		$curl = curl_init();
 		if (!empty($pageNo)) {
-			$pageNoString = "page=".$pageNo;
+			$pageNoString = "page=".$pageNo."&";
 		}else{
 			$pageNoString = '';
 		}
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/stockmanagement/stock?".$pageNoString."&warehouseId=104",
+		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/stockmanagement/stock?".$pageNoString."warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
