@@ -15,9 +15,7 @@ class ContentController extends Controller
 	 * @return string
 	 */
 	public function home(Twig $twig):string
-	{
-		echo $_SERVER['HTTP_HOST']." ";
-		echo $_SERVER['SERVER_NAME'];exit;
+	{		
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
@@ -120,7 +118,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/item_sets",
+		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/item_sets",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -151,7 +149,7 @@ class ContentController extends Controller
 	public function login(){
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/login",
+		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/login",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -211,7 +209,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 		$pageNoString = "page=".$pageNo;
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?".$pageNoString."&warehouseId=104",
+		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/stockmanagement/stock?".$pageNoString."&warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
