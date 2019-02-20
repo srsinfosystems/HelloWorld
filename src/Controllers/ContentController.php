@@ -260,14 +260,12 @@ curl_setopt_array($curl, array(
 
 $response = curl_exec($curl);
 $err = curl_error($curl);
-var_dump($response);exit;
 curl_close($curl);
 
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
 	$xml = simplexml_load_string($response);
-  print_r($xml);
 }
 	}
 }
