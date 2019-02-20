@@ -34,8 +34,7 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		 $brand = $_GET['brand'];
-		
+		 $brand = $_GET['brand'];		
 		
 		$login = $this->login();
 		$login = json_decode($login, true);
@@ -207,7 +206,11 @@ class ContentController extends Controller
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$curl = curl_init();
-		$pageNoString = "page=".$pageNo;
+		if (!empty($pageNo)) {
+			$pageNoString = "page=".$pageNo;
+		}else{
+			$pageNoString = '';
+		}
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => $_SERVER['HTTP_HOST']."/rest/stockmanagement/stock?".$pageNoString."&warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
