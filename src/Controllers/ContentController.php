@@ -15,8 +15,7 @@ class ContentController extends Controller
 	 * @return string
 	 */
 	public function home(Twig $twig):string
-	{		
-		echo $_SERVER['HTTP_HOST'];
+	{	
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
@@ -114,11 +113,11 @@ class ContentController extends Controller
 		}
 	}
 	public function storeItemsToPlanty($Items, $access_token){
-	
+		$host = $_SERVER['HTTP_HOST'];
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/item_sets",
+		  CURLOPT_URL => "https://".$host."/rest/item_sets",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -147,9 +146,10 @@ class ContentController extends Controller
 	}
 
 	public function login(){
+		$host = $_SERVER['HTTP_HOST'];
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/login",
+		  CURLOPT_URL => "https://".$host."/rest/login",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -212,8 +212,9 @@ class ContentController extends Controller
 		}else{
 			$pageNoString = '';
 		}
+		$host = $_SERVER['HTTP_HOST'];
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/stockmanagement/stock?".$pageNoString."warehouseId=104",
+		  CURLOPT_URL => "https://".$host."/rest/stockmanagement/stock?".$pageNoString."warehouseId=104",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -242,10 +243,11 @@ class ContentController extends Controller
 	}
 
 	public function getOrder($access_token){
+		$host = $_SERVER['HTTP_HOST'];
 		$curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://5acdd7b5ff42b7a9d274a25e6e9f4db6868e8540.plentymarkets-cloud-ie.com/rest/orders",
+  CURLOPT_URL => "https://".$host."/rest/orders",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
