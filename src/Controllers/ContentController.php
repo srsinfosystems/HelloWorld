@@ -43,7 +43,7 @@ class ContentController extends Controller
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
 		
-		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
+		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
 	}
 	public function getAllItems($brand){
@@ -54,7 +54,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -62,7 +62,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  CURLOPT_TIMEOUT=> 900000000
 		));
 
 		$response = curl_exec($curl);
@@ -85,12 +85,17 @@ class ContentController extends Controller
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
+	        	$products[$sr]['id'] = $item['id'];
+            	$products[$sr]['name'] = $item['name'];
+            	$categories = array("categoryId"=>155);
+            	$products[$sr]['categories'][] = $categories;
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
-	          /*$variation = $this->createVariation($ItemResponse['id']);
-	          $variationResponse = json_decode($variation,TRUE);*/
-	         	$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+	          $variation = $this->createVariation($ItemResponse['id']);
+	          $variationResponse = json_decode($variation,TRUE);
+	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $$variationResponse['id'], rand(10,1000000));
+	         
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
 	                
@@ -104,7 +109,7 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return($ItemResponse);
+	      return(json_encode($products));
 
 		}
 	}
@@ -120,7 +125,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": 155\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}]\n}",
@@ -130,7 +135,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  CURLOPT_TIMEOUT=> 900000000
 		));
 
 		$response = curl_exec($curl);
@@ -168,7 +173,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		 // CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => $requestdata,
@@ -177,7 +182,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  CURLOPT_TIMEOUT=> 900000000
 		));
 
 		$response = curl_exec($curl);
@@ -200,7 +205,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => $Items,
@@ -232,7 +237,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "username=API-USER&password=%5BnWu%3Bx%3E8Eny%3BbSs%40",
@@ -298,7 +303,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -332,7 +337,7 @@ curl_setopt_array($curl, array(
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 30,
+  //CURLOPT_TIMEOUT => 30,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
   CURLOPT_HTTPHEADER => array(
@@ -366,7 +371,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\"itemId\": \"$ItemId\",\"uploadFileName\": \"stock_product_image_97783_673693377.jpg\", \"uploadUrl\": \"https://www.brandsdistribution.com/prod/stock_product_image_97783_673693377.jpg\",\"names\": [{\"lang\": \"en\",\"name\": \"Red plentymarkets tee\"}],\"availabilities\": [{\"type\": \"mandant\",\"value\": 42296}]}",
@@ -401,7 +406,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -436,7 +441,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  //CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
