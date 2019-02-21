@@ -88,20 +88,22 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
-	          array_push($ItemResponseArray,$ItemResponse);
+	          $variation = createVariation($ItemResponse['id']);
 	         
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
-	                //$variation = createVariation($item['id'])
-	                //$ImageResponse = $this->uploadImage($item['id'],$picture['url'], $picture['id']);
+	                
+	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 	            }
-	          
+	          array_push($ItemResponseArray[$sr]['Item'],$ItemResponse);
+	          array_push($ItemResponseArray[$sr]['variation'],$variation);
+	          array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
 	          $sr++;
 	        }        
 	        
 	        $i++;
 	      } 
-	      return (json_encode($ItemResponseArray));
+	      return ($ItemResponseArray);
 
 		}
 	}
