@@ -151,6 +151,16 @@ class ContentController extends Controller
 		$host = $_SERVER['HTTP_HOST'];
 		$img = $image;
 		$imgName = explode("/",$img);
+		$name[0] = array("lang" => "en","name" => "Red plentymarkets tee");
+    	$availabilities[0] = array("type" => "mandant","value" => "$imagevalue");
+    	$requestdata = Array(
+		    "itemId" => "$ItemId",
+		    "uploadFileName" => "$imgName[2]",
+		    "uploadUrl" => "https://www.brandsdistribution.com".$image,
+		    $name,
+		    $availabilities
+		);
+		  $requestdata = json_encode($requestdata); 
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -161,7 +171,7 @@ class ContentController extends Controller
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\"itemId\": \"$ItemId\",\"uploadFileName\": \"".$imgName[1]."\", \"uploadUrl\": \"https://www.brandsdistribution.com".$image."\",\"names\": [{\"lang\": \"en\",\"name\": \"Stock Product Image\"}],\"availabilities\": [{\"type\": \"mandant\",\"value\": ".$imagevalue."}]}",
+		  CURLOPT_POSTFIELDS => $requestdata,
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
@@ -178,7 +188,7 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return "Image Uploaded";
 		}
 	}
 	public function storeItemsToPlanty($Items, $access_token){
