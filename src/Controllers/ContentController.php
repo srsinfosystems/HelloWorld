@@ -103,7 +103,7 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      echo $ItemResponseArray;
+	      echo json_encode($ItemResponseArray);
 
 		}
 	}
