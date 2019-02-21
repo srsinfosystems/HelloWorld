@@ -96,7 +96,7 @@ class ContentController extends Controller
 	          $variationResponse = json_decode($variation,TRUE);*/
 
 	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId']);
-	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $variationResponse['id'], rand(10,100000));
+	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,100000));
 	         
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
