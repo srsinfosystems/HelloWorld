@@ -43,8 +43,8 @@ class ContentController extends Controller
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
 		
-		$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $storeItemsToPlenty));
+		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
@@ -92,8 +92,8 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
-	          $variation = $this->createVariation($ItemResponse['id']);
-	          $variationResponse = json_decode($variation,TRUE);
+	          /*$variation = $this->createVariation($ItemResponse['id']);
+	          $variationResponse = json_decode($variation,TRUE);*/
 
 	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId']);
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $variationResponse['id'], rand(10,100000));
@@ -111,8 +111,8 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return(json_encode($ItemResponseArray));
-	      // return(json_encode($products));
+	      // return(json_encode($ItemResponseArray));
+	      return(json_encode($ItemResponse));
 
 		}
 	}
