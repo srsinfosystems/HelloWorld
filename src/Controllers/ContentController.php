@@ -103,7 +103,7 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return ($ItemResponseArray);
+	      echo $ItemResponseArray;
 
 		}
 	}
