@@ -94,6 +94,7 @@ class ContentController extends Controller
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
 	          $variation = $this->createVariation($ItemResponse['id']);
 	          $variationResponse = json_decode($variation,TRUE);
+	          $activeItem = $this->ActiveItem($ItemResponse['id'], $variationResponse['id']);
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $variationResponse['id'], rand(10,100000));
 	         
 	          foreach ($item['pictures']['image'] as $picture) {
@@ -109,7 +110,8 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return(json_encode($products));
+	      return(json_encode($ItemResponse));
+	      // return(json_encode($products));
 
 		}
 	}
@@ -462,6 +464,43 @@ if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
 		  return $response;
+		}
+	}
+
+	public function ActiveItem($itemId, $variationId){
+		$login = $this->login();
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		$host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+		  // return $response;
+		  return "true";
 		}
 	}
 }
