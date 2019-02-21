@@ -97,7 +97,7 @@ class ContentController extends Controller
 	            }
 	          array_push($ItemResponseArray[$sr]['Item'],$ItemResponse);
 	          array_push($ItemResponseArray[$sr]['variation'],$variation);
-	          array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
+	          //array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
 	          $sr++;
 	        }        
 	        
