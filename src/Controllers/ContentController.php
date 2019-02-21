@@ -88,7 +88,7 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
-	          $variation = createVariation($ItemResponse['id']);
+	          $variation = $this->createVariation($ItemResponse['id']);
 	         
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
@@ -369,7 +369,7 @@ if ($err) {
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  echo json_decode($response,TRUE);
 		}
 	}
 	public function createVariation($ItemId){
@@ -401,7 +401,7 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return json_decode($response,TRUE);
 		}
 	}
 }
