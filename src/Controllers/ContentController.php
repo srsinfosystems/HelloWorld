@@ -137,9 +137,9 @@ class ContentController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  return $response;
 		}
 	}
 	public function uploadImage($ItemId, $image, $imagevalue){
