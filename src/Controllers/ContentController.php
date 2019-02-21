@@ -101,7 +101,7 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return (json_encode($ItemResponse));
+	      return (json_encode($ItemResponseArray));
 
 		}
 	}
