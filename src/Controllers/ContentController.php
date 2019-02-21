@@ -94,6 +94,7 @@ class ContentController extends Controller
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
 	          $variation = $this->createVariation($ItemResponse['id']);
 	          $variationResponse = json_decode($variation,TRUE);
+
 	          $activeItem = $this->ActiveItem($ItemResponse['id'], $variationResponse['id']);
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $variationResponse['id'], rand(10,100000));
 	         
@@ -102,7 +103,7 @@ class ContentController extends Controller
 	                
 	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 	            }
-	          //array_push($ItemResponseArray[$sr]['Item'],$ItemResponse);
+	          array_push($ItemResponseArray,$ItemResponse);
 	         // array_push($ItemResponseArray[$sr]['variation'],$variation);
 	          //array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
 	          $sr++;
@@ -110,7 +111,7 @@ class ContentController extends Controller
 	        
 	        $i++;
 	      } 
-	      return(json_encode($ItemResponse));
+	      return(json_encode($ItemResponseArray));
 	      // return(json_encode($products));
 
 		}
@@ -468,6 +469,7 @@ if ($err) {
 	}
 
 	public function ActiveItem($itemId, $variationId){
+		echo $itemId." ".$variationId;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
