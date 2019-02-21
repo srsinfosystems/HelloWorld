@@ -71,7 +71,7 @@ class ContentController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return "cURL Error #:" . $err;
 		} else {
 		  	
 			$xml = simplexml_load_string($response); 
@@ -88,22 +88,23 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
-	          $variation = $this->createVariation($ItemResponse['id']);
-	         
+	          /*$variation = $this->createVariation($ItemResponse['id']);
+	          $variationResponse = json_decode($variation,TRUE);*/
+	         	$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId']);
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
 	                
 	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 	            }
-	          array_push($ItemResponseArray[$sr]['Item'],$ItemResponse);
-	          array_push($ItemResponseArray[$sr]['variation'],$variation);
+	          //array_push($ItemResponseArray[$sr]['Item'],$ItemResponse);
+	         // array_push($ItemResponseArray[$sr]['variation'],$variation);
 	          //array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
 	          $sr++;
 	        }        
 	        
 	        $i++;
 	      } 
-	      echo json_encode($ItemResponseArray);
+	      return($ItemResponse);
 
 		}
 	}
@@ -129,6 +130,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -165,6 +167,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -173,9 +176,9 @@ class ContentController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  return $response;
 		}
 	}
 	public function storeItemsToPlanty($Items, $access_token){
@@ -228,6 +231,7 @@ class ContentController extends Controller
 		    "content-type: application/x-www-form-urlencoded",
 		    "postman-token: 49a8d541-073c-8569-b3c3-76319f67e552"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -293,6 +297,7 @@ class ContentController extends Controller
 		    "content-type: application/json",
 		    "postman-token: 8a2c3500-dd2e-6ac7-cc50-637991e0222e"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -325,6 +330,7 @@ curl_setopt_array($curl, array(
     "cache-control: no-cache",
     "postman-token: e35ffc09-3b07-9c0a-11dd-5853d81af683"
   ),
+  CURLOPT_TIMEOUT=> 90000000
 ));
 
 $response = curl_exec($curl);
@@ -332,7 +338,7 @@ $err = curl_error($curl);
 curl_close($curl);
 
 if ($err) {
-  echo "cURL Error #:" . $err;
+  return "cURL Error #:" . $err;
 } else {
 	$xml = simplexml_load_string($response);
 }
@@ -359,6 +365,7 @@ if ($err) {
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -367,9 +374,9 @@ if ($err) {
 		curl_close($curl);
 
 		if ($err) {
-		  echo "cURL Error #:" . $err;
+		  return "cURL Error #:" . $err;
 		} else {
-		  echo json_decode($response,TRUE);
+		  return json_decode($response,TRUE);
 		}
 	}
 	public function createVariation($ItemId){
@@ -391,6 +398,7 @@ if ($err) {
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache"
 		  ),
+		  CURLOPT_TIMEOUT=> 90000000
 		));
 
 		$response = curl_exec($curl);
@@ -402,6 +410,43 @@ if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
 		  return json_decode($response,TRUE);
+		}
+	}
+
+	public function linkingBarcode($ItemId, $variationId, $code){
+		$login = $this->login();
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		$host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		  CURLOPT_TIMEOUT=> 90000000
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+		  return $response;
 		}
 	}
 }
