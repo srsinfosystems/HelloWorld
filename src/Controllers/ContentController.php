@@ -106,7 +106,7 @@ class ContentController extends Controller
                 $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
                 $no++;
             }
-echo $ItemResponseArray;exit;
+echo json_encode($ItemResponseArray);exit;
 	    }else{
 	      
 	      foreach ($array as  $value) {  
