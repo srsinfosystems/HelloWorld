@@ -46,8 +46,7 @@ class ContentController extends Controller
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
 	}
-	public function getAllItems($brand){
-		echo "hiiiii";
+	public function getAllItems($brand){		
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -102,7 +101,7 @@ class ContentController extends Controller
 		   $no = 0;
             foreach ($array['items']['item']['pictures']['image'] as $picture) {                
                 $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
-                echo $ImageResponse;exit;
+                // echo $ImageResponse;exit;
                 $ImageResponse = json_decode($ImageResponse,TRUE);
                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
@@ -110,7 +109,7 @@ class ContentController extends Controller
             }
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
-	      
+	      echo "hiiiii else";exit;
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
