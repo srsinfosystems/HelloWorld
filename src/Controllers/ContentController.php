@@ -148,8 +148,9 @@ class ContentController extends Controller
                 	$ImageResponse = json_decode($ImageResponse,TRUE);
 	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+                	$no++;
 	            } 
-	            $no++;
+	            
 	         
 	          $sr++;
 	        }  
