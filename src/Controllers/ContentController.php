@@ -121,7 +121,7 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
             	
 	          $ItemResponse = $this->createItem($item['name']);
-	          echo $ItemResponse;exit;
+	          
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
 
 	          $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
@@ -130,10 +130,13 @@ class ContentController extends Controller
 	          $variationResponse = json_decode($variation,TRUE);*/
 
 	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $item['streetPrice']);
+	          echo $activeItem;
 	          $activeItem = json_decode($activeItem,TRUE);	          
 	          $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,100000));
+	          echo $linkingBarcode;exit;
+
 	          $linkingBarcode = json_decode($linkingBarcode,TRUE);
 	          $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 	         $no = 0;
