@@ -47,6 +47,7 @@ class ContentController extends Controller
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
 	}
 	public function getAllItems($brand){
+		echo "hiiiii";
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -146,9 +147,10 @@ echo json_encode($ItemResponseArray);exit;
 	        
 	        $i++;
 	      } 
+	      echo json_encode($ItemResponseArray);exit;
 	  }
-	  echo json_encode($ItemResponseArray);exit;
-	      return(json_encode($ItemResponseArray));
+	  
+	      //return(json_encode($ItemResponseArray));
 	      // return(json_encode($ItemResponse));
 
 		}
