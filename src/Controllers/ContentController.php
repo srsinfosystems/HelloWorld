@@ -164,7 +164,7 @@ echo json_encode($ItemResponseArray);exit;
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://3f12dd05d4770bcf7a8286ac173829fbceb770d8.plentymarkets-cloud-ie.com/rest/items",
+		  CURLOPT_URL => "https://".$curl."/rest/items",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
