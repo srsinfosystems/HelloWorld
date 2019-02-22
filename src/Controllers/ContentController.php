@@ -102,6 +102,7 @@ class ContentController extends Controller
 		   $no = 0;
             foreach ($array['items']['item']['pictures']['image'] as $picture) {                
                 $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+                echo $ImageResponse;exit;
                 $ImageResponse = json_decode($ImageResponse,TRUE);
                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
