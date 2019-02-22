@@ -155,7 +155,7 @@ echo "in";
 	      // echo json_encode($ItemResponseArray);exit;
 	 
 	  
-	      return(json_encode($ItemResponseArray));
+	      echo json_encode($ItemResponseArray);
 	      // return(json_encode($ItemResponse));
 
 		}
