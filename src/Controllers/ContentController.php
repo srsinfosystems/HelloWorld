@@ -86,7 +86,7 @@ class ContentController extends Controller
 	    if (!empty($array['items']['item']['availability'])) {
            $ItemResponse = $this->createItem($array['items']['item']['name']);
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
-
+echo $ItemResponse['id'];
 	       $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
 	       $ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
 
@@ -147,6 +147,7 @@ echo json_encode($ItemResponseArray);exit;
 	        $i++;
 	      } 
 	  }
+	  echo json_encode($ItemResponseArray);exit;
 	      return(json_encode($ItemResponseArray));
 	      // return(json_encode($ItemResponse));
 
