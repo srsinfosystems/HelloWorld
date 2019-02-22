@@ -81,7 +81,34 @@ class ContentController extends Controller
 			
 		  $i=0;
 	      $products = array(); 
-	      $ItemResponseArray = array();     
+	      $ItemResponseArray = array(); 
+
+	    if (!empty($array['items']['item']['availability'])) {
+           $ItemResponse = $this->createItem($array['items']['item']['name']);
+	       $ItemResponse = json_decode($ItemResponse,TRUE);
+
+	       $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       $ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
+
+	       $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+
+	       $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+
+	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $item['streetPrice']);
+
+	       $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+		   
+		   $no = 0;
+            foreach ($array['items']['item']['pictures']['image'] as $picture) {                
+                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+                $ImageResponse = json_decode($ImageResponse,TRUE);
+               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+                $no++;
+            }
+
+	    }else{
+	      
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
@@ -92,25 +119,34 @@ class ContentController extends Controller
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
+
+	          $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       	  $ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
 	          /*$variation = $this->createVariation($ItemResponse['id']);
 	          $variationResponse = json_decode($variation,TRUE);*/
 
-	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId']);
+	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $item['streetPrice']);
+
+	          $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,100000));
-	         
+	          $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+	         $no = 0;
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
-	                
 	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+
+	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+                	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
 	            }
-	          array_push($ItemResponseArray,$ItemResponse);
-	         // array_push($ItemResponseArray[$sr]['variation'],$variation);
-	          //array_push($ItemResponseArray[$sr]['ImageResponse'],$ImageResponse);
+	            $no++;
+	         
 	          $sr++;
 	        }        
 	        
 	        $i++;
 	      } 
+	  }
 	      return($ItemResponseArray);
 	      // return(json_encode($ItemResponse));
 
@@ -468,7 +504,7 @@ if ($err) {
 		}
 	}
 
-	public function ActiveItem($itemId, $variationId){
+	public function ActiveItem($itemId, $variationId, $purchasePrice){
 		//echo $itemId." ".$variationId;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
@@ -485,7 +521,7 @@ if ($err) {
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true\n}",
+		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice \n}",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
