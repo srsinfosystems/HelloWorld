@@ -77,7 +77,7 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
-			$categoryArray = array("men", "women");
+			
 			$arrCheck = $array;
 		  $i=0;
 	      $products = array(); 
@@ -110,15 +110,15 @@ class ContentController extends Controller
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
 	      echo "else == ";
-	      echo json_encode($array); echo "no response";exit;
+	       echo "no response  == ";
 	      foreach ($array as $value) {  
-	      echo "else loop";
+	      echo "else loop == ";
 
 	        $sr = $i;
 	        foreach ($value['item'] as $item) { 
 	      echo "else item loop";
 
-	        	$products[$sr]['id'] = $item['id'];
+	        	echo $products[$sr]['id'] = $item['id'];
             	$products[$sr]['name'] = $item['name'];
             	$categories = array("categoryId"=>155);
             	$products[$sr]['categories'][] = $categories;
