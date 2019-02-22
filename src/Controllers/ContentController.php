@@ -109,7 +109,7 @@ class ContentController extends Controller
             }
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
-	      echo "hiiiii else";exit;
+	      
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
@@ -119,6 +119,7 @@ class ContentController extends Controller
             	$products[$sr]['categories'][] = $categories;
 	          //$products[$sr]['name'] = $item['name'];
 	          $ItemResponse = $this->createItem($item['name']);
+	          echo $ItemResponse;exit;
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
 
 	          $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
