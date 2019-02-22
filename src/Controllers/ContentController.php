@@ -83,7 +83,7 @@ class ContentController extends Controller
 	      $products = array(); 
 	      $ItemResponseArray = array(); 
 
-	       if ($arrCheck['items']['item']['availability']) {
+	       /*if ($arrCheck['items']['item']['availability']) {
            $ItemResponse = $this->createItem($arrCheck['items']['item']['name']);
            
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
@@ -108,7 +108,7 @@ class ContentController extends Controller
                 $no++;
             }
 			return json_encode($ItemResponseArray);
-	    }
+	    }*/
 	      
 	      foreach ($arrayData as $value) {  
 echo "in";
@@ -144,19 +144,17 @@ echo "in";
                 	$ImageResponse = json_decode($ImageResponse,TRUE);
 	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
-	            } //echo "after image";
+	            } 
 	            $no++;
 	         
 	          $sr++;
-	        }       //echo "after item"; 
+	        }  
 	        
 	        $i++;
-	      } //echo "after array";
-	      // echo json_encode($ItemResponseArray);exit;
-	 
+	      } 
+	      // echo json_encode($ItemResponseArray);exit;	 
 	  
-	      echo json_encode($ItemResponseArray);
-	      // return(json_encode($ItemResponse));
+	      return json_encode($ItemResponseArray);
 
 		}
 }
