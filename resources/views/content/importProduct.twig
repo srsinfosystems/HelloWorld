@@ -11,8 +11,9 @@
 {% if data %}
 <div class="alert alert-success">
   <strong>Success!</strong> Items created successfully.
+  {{ data }}
 </div>
- {{ data }}
+ 
  {% else %}
  <div class="alert alert-danger">
   <strong>Error!</strong> Somthing went wrong.
