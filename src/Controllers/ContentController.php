@@ -83,7 +83,7 @@ class ContentController extends Controller
 	      $products = array(); 
 	      $ItemResponseArray = array(); 
 
-	    if (!empty($array['items']['item']['availability'])) {
+	       if (!empty($array['items']['item']['availability'])) {
            $ItemResponse = $this->createItem($array['items']['item']['name']);
            
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
@@ -109,8 +109,8 @@ class ContentController extends Controller
             }
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
-	      echo "else";
-	      echo json_encode($array);
+	      echo "else == ";
+	      echo json_encode($array); echo "no response";exit;
 	      foreach ($array as $value) {  
 	      echo "else loop";
 
@@ -162,7 +162,7 @@ class ContentController extends Controller
 	      // return(json_encode($ItemResponse));
 
 		}
-	}
+}
 	public function createItem($title){
 		$login = $this->login();
 		$login = json_decode($login, true);
