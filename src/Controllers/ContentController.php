@@ -83,7 +83,7 @@ class ContentController extends Controller
 	      $products = array(); 
 	      $ItemResponseArray = array(); 
 
-	       if (!empty($arrCheck['items']['item']['availability'])) {
+	       if ($arrCheck['items']['item']['availability']) {
            $ItemResponse = $this->createItem($arrCheck['items']['item']['name']);
            
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
