@@ -164,7 +164,7 @@ echo json_encode($ItemResponseArray);exit;
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$curl."/rest/items",
+		  CURLOPT_URL => "https://".$host."/rest/items",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
