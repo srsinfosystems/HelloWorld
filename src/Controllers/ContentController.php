@@ -110,6 +110,7 @@ class ContentController extends Controller
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
 	      echo "else";
+	      echo json_encode($array);
 	      foreach ($array as $value) {  
 	      echo "else loop";
 
