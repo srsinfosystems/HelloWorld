@@ -76,9 +76,9 @@ class ContentController extends Controller
 		  	
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
-			$array = json_decode($json,TRUE); 
+			$arrayData = json_decode($json,TRUE); 
 			
-			$arrCheck = $array;
+			$arrCheck = $arrayData;
 		  $i=0;
 	      $products = array(); 
 	      $ItemResponseArray = array(); 
@@ -111,7 +111,7 @@ class ContentController extends Controller
 	    }
 	      echo "else == ";
 	       echo "no response  == ";
-	      foreach ($array as $value) {  
+	      foreach ($arrayData as $value) {  
 	      echo "else loop == ";
 
 	        $sr = $i;
