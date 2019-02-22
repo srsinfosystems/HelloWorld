@@ -111,7 +111,6 @@ class ContentController extends Controller
 	    }*/
 	      
 	      foreach ($arrayData as $value) {  
-echo "in";
 	        $sr = $i;
 	        foreach ($value['item'] as $item) { 
 
@@ -122,7 +121,7 @@ echo "in";
 	          //$products[$sr]['name'] = $item['name'];
             	
 	          $ItemResponse = $this->createItem($item['name']);
-	          // echo $ItemResponse;exit;
+	          echo $ItemResponse;exit;
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
 
 	          $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
