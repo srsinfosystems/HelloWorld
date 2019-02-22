@@ -86,18 +86,17 @@ class ContentController extends Controller
 
 	    if (!empty($array['items']['item']['availability'])) {
            $ItemResponse = $this->createItem($array['items']['item']['name']);
-           echo $ItemResponse;
+           
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
-echo $ItemResponse['id']."===";
 	       $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
 	       $ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
 
 	       $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
-
+	       $linkingBarcode = json_decode($linkingBarcode,TRUE);
 	       $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
 	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $array['items']['item']['streetPrice']);
-
+	       $activeItem = json_decode($activeItem,TRUE);
 	       $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 		   
 		   $no = 0;
@@ -108,7 +107,7 @@ echo $ItemResponse['id']."===";
                 $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
                 $no++;
             }
-echo json_encode($ItemResponseArray);exit;
+// echo json_encode($ItemResponseArray);exit;
 	    }else{
 	      
 	      foreach ($array as  $value) {  
@@ -128,16 +127,17 @@ echo json_encode($ItemResponseArray);exit;
 	          $variationResponse = json_decode($variation,TRUE);*/
 
 	          $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $item['streetPrice']);
-
+	          $activeItem = json_decode($activeItem,TRUE);	          
 	          $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 
 	          $linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,100000));
+	          $linkingBarcode = json_decode($linkingBarcode,TRUE);
 	          $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 	         $no = 0;
 	          foreach ($item['pictures']['image'] as $picture) {
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
 	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
-
+                	$ImageResponse = json_decode($ImageResponse,TRUE);
 	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
 	            }
@@ -148,10 +148,10 @@ echo json_encode($ItemResponseArray);exit;
 	        
 	        $i++;
 	      } 
-	      echo json_encode($ItemResponseArray);exit;
+	      // echo json_encode($ItemResponseArray);exit;
 	  }
 	  
-	      //return(json_encode($ItemResponseArray));
+	      return(json_encode($ItemResponseArray));
 	      // return(json_encode($ItemResponse));
 
 		}
