@@ -78,13 +78,13 @@ class ContentController extends Controller
 			$json = json_encode($xml);
 			$array = json_decode($json,TRUE); 
 			$categoryArray = array("men", "women");
-			
+			$arrCheck = $array;
 		  $i=0;
 	      $products = array(); 
 	      $ItemResponseArray = array(); 
 
-	       if (!empty($array['items']['item']['availability'])) {
-           $ItemResponse = $this->createItem($array['items']['item']['name']);
+	       if (!empty($arrCheck['items']['item']['availability'])) {
+           $ItemResponse = $this->createItem($arrCheck['items']['item']['name']);
            
 	       $ItemResponse = json_decode($ItemResponse,TRUE);
 	       $ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
@@ -94,12 +94,12 @@ class ContentController extends Controller
 	       $linkingBarcode = json_decode($linkingBarcode,TRUE);
 	       $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $array['items']['item']['streetPrice']);
+	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrCheck['items']['item']['streetPrice']);
 	       $activeItem = json_decode($activeItem,TRUE);
 	       $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 		   
 		   $no = 0;
-            foreach ($array['items']['item']['pictures']['image'] as $picture) {                
+            foreach ($arrCheck['items']['item']['pictures']['image'] as $picture) {                
                 $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
                 // echo $ImageResponse;exit;
                 $ImageResponse = json_decode($ImageResponse,TRUE);
