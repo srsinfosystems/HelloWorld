@@ -113,12 +113,12 @@ class ContentController extends Controller
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
-	        	echo "hiiii";
-	        	echo $products[$sr]['id'] = $item['id'];
+	        	$products[$sr]['id'] = $item['id'];
             	$products[$sr]['name'] = $item['name'];
             	$categories = array("categoryId"=>155);
             	$products[$sr]['categories'][] = $categories;
 	          //$products[$sr]['name'] = $item['name'];
+            	echo "in else";
 	          $ItemResponse = $this->createItem($item['name']);
 	          echo $ItemResponse;exit;
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
