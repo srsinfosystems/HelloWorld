@@ -94,7 +94,7 @@ class ContentController extends Controller
 
 	       $ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $item['streetPrice']);
+	       $activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $array['items']['item']['streetPrice']);
 
 	       $ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 		   
