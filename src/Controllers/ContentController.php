@@ -237,7 +237,7 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return "Image Uploaded";
+		  return $response;
 		}
 	}
 	public function storeItemsToPlanty($Items, $access_token){
