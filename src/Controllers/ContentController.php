@@ -109,16 +109,20 @@ class ContentController extends Controller
             }
 // echo json_encode($ItemResponseArray);exit;
 	    }else{
-	      
-	      foreach ($array as  $value) {  
+	      echo "else";
+	      foreach ($array as $value) {  
+	      echo "else loop";
+
 	        $sr = $i;
-	        foreach ($value['item'] as $item) {
+	        foreach ($value['item'] as $item) { 
+	      echo "else item loop";
+
 	        	$products[$sr]['id'] = $item['id'];
             	$products[$sr]['name'] = $item['name'];
             	$categories = array("categoryId"=>155);
             	$products[$sr]['categories'][] = $categories;
 	          //$products[$sr]['name'] = $item['name'];
-            	echo "in else";
+            	
 	          $ItemResponse = $this->createItem($item['name']);
 	          echo $ItemResponse;exit;
 	          $ItemResponse = json_decode($ItemResponse,TRUE);
@@ -142,16 +146,16 @@ class ContentController extends Controller
                 	$ImageResponse = json_decode($ImageResponse,TRUE);
 	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
                 	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
-	            }
+	            } echo "after image";
 	            $no++;
 	         
 	          $sr++;
-	        }        
+	        }       echo "after item"; 
 	        
 	        $i++;
-	      } 
+	      } echo "after array";
 	      // echo json_encode($ItemResponseArray);exit;
-	  }
+	  } echo "after else";exit;
 	  
 	      return(json_encode($ItemResponseArray));
 	      // return(json_encode($ItemResponse));
