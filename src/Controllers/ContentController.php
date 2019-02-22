@@ -113,7 +113,8 @@ class ContentController extends Controller
 	      foreach ($array as  $value) {  
 	        $sr = $i;
 	        foreach ($value['item'] as $item) {
-	        	$products[$sr]['id'] = $item['id'];
+	        	echo "hiiii";
+	        	echo $products[$sr]['id'] = $item['id'];
             	$products[$sr]['name'] = $item['name'];
             	$categories = array("categoryId"=>155);
             	$products[$sr]['categories'][] = $categories;
