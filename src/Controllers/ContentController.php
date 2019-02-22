@@ -111,7 +111,7 @@ class ContentController extends Controller
 	    }*/
 	      
 	      foreach ($arrayData as $value) {  
-	        $sr = $i;
+	        $sr = 0;
 	        foreach ($value['item'] as $item) { 
 
 	        	$products[$sr]['id'] = $item['id'];
@@ -144,9 +144,9 @@ class ContentController extends Controller
 	                /*$products[$sr]['image_url'][] = "https://www.brandsdistribution.com".$picture['url'];*/
 	                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 	               
-                	$ImageResponse = json_decode($ImageResponse,TRUE);
+                	/*$ImageResponse = json_decode($ImageResponse,TRUE);
 	                $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
-                	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+                	$ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];*/
                 	$no++;
 	            } 
 	            
