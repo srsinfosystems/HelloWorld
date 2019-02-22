@@ -147,7 +147,7 @@ class ContentController extends Controller
 	        $i++;
 	      } 
 	  }
-	      return($ItemResponseArray);
+	      return(json_encode($ItemResponseArray));
 	      // return(json_encode($ItemResponse));
 
 		}
