@@ -44,7 +44,7 @@ class ContentController extends Controller
 
 		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
