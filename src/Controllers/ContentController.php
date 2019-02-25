@@ -83,7 +83,42 @@ class ContentController extends Controller
 					echo "single";
 		        } else{
 					foreach ($arrayData['items']['item'] as $value) { 
-						return $value;
+						$ItemResponse = $this->createItem($value['name']);
+	          
+	          			$ItemResponse = json_decode($ItemResponse,TRUE);
+	          			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       				$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
+
+	       				$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+	       				$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+
+	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice']);
+	       				$activeItem = json_decode($activeItem,TRUE);
+	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+
+	       				$no = 0;
+	       				if ($value['pictures']['image']) {
+	       				
+		       				if ($value['pictures']['image']['id']) {
+		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$value['pictures']['image']['url'], $value['pictures']['image']['id']);
+		       						$ItemResponseArray[$i]['images'][$no]['id'] = $value['pictures']['image']['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $value['pictures']['image']['url'];
+		       				}else{
+					            foreach ($value['pictures']['image'] as $picture) {                
+					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+					                // echo $ImageResponse;exit;
+					                $ImageResponse = json_decode($ImageResponse,TRUE);
+					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+					                $no++;
+					            }
+					        }
+				    	}else{
+				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
+					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
+				    	}
+						return $ItemResponseArray;
 					}          
 		        } 
 		    }else{
