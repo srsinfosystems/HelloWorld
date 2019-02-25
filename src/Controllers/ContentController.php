@@ -78,13 +78,17 @@ class ContentController extends Controller
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
 			echo $arrayData['items']['item']['availability'];
-			if($arrayData['items']['item']['availability']){
-				echo "single";
-	        } else{
-				foreach ($arrayData['items']['item'] as $value) { 
-					return $value;
-				}          
-	        } 
+			if($arrayData['items']['item']){
+				if($arrayData['items']['item']['availability']){
+					echo "single";
+		        } else{
+					foreach ($arrayData['items']['item'] as $value) { 
+						return $value;
+					}          
+		        } 
+		    }else{
+		    	echo "No product  found";
+		    }
 	        exit;
 			
 
