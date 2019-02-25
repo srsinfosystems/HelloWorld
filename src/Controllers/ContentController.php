@@ -77,11 +77,11 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
-			echo $arrayData['items']['item']['availability'];
+			//echo $arrayData['items']['item']['availability'];
 			$i=0;
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
-					echo "single";
+					// echo "single";
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);           
 	       			$ItemResponse = json_decode($ItemResponse,TRUE);
 	       			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
