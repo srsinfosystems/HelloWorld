@@ -14,55 +14,106 @@ class ContentController extends Controller
 	 * @param Twig $twig
 	 * @return string
 	 */
-	public function home(Twig $twig):string
+	public function getorder(Twig $twig):string
 	{	
-		$message = $_GET['message'];
-		if (!empty($message)) {
-			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
-		}else{
-			return $twig->render('HelloWorld::content.mainView');
+		$order_id = "101";
+		$orderItemsData = $this->order($order_id);
+		$orderItemsData = json_decode($orderData, TRUE);		
+
+		$operationData = array();
+		$OrderProducts = array();
+		foreach ($orderItemsData['entries'] as  $value) {
+			
+			$getVariation = $this->getVariation($value['itemVariationId']);
+			$getVariation = json_decode($getVariation, TRUE);
+
+			$stock_id = $getVariation['entries']['model'];
+			$qty = $value['quantity'];	
+
+			if ($value['lockStatus']=="permanentlyLocked") {
+				$operationData[] = array(
+				"lock"=>array("stock_id"=>"$stock_id", "qty"=>"$qty"));
+			}
+			if ($value['lockStatus']=="unlocked") {
+				$operationData[] = array(
+				"unlock"=>array("stock_id"=>"$stock_id", "qty"=>"$qty"));
+			}
+			/*$operationData[] = array(				
+				"set"=>array("stock_id"=>"$stock_id", "qty"=>"$qty"));*/
+
+			$OrderProducts[] = array('modelId'=>"$stock_id", 'qty'=>"$qty");
+			
 		}
 		
+		$reserveOrder = $this->reserve($operationData);
+		$lockedOrder = $this->lockedOrder();		
+		$acquireOrder = $this->acquireOrder($OrderProducts);
+		$customerDetail = $this->customerDetail($order_id);
+		$customerDetail['order_number'] = $acquireOrder;
+		foreach ($orderItemsData['entries'] as  $value) {
+	
+			$getVariation = $this->getVariation($value['itemVariationId']);
+			$getVariation = json_decode($getVariation, TRUE);
 
+			$stock_id = $getVariation['entries']['model'];
+			$qty = $value['quantity'];	
+			$SingleRecipientOrder = $this->SingleRecipientOrder($customerDetail, $stock_id, $qty);
+			print_r($SingleRecipientOrder);
+
+		}
+
+		$orderStatusOrderId = $this->orderStatusOrderId($acquireOrder);
+
+<<<<<<< HEAD
+		return $twig->render('HelloWorld::content.getorder',array('data' => $acquireOrder));
 	}
-	public function sayHello(Twig $twig):string
-	{
-		return $twig->render('HelloWorld::content.mainView');
-	}
 
-	public function importProduct(Twig $twig):string
-	{
-		//echo $_REQUEST;
+	public function reserve($operationData){
+		$operationLock = '<operation type="lock">';
+		foreach ($operationData['lock'] as $value) {
+			$operationLock .= ' <model stock_id="'.$value['stock_id'].'" quantity="'.$value['qty'].'" />';
+		}
+		$operationLock .= '</operation>';
+		$operationUnlock = '<operation type="unlock">';
+		foreach ($operationData['unlock'] as $value) {
+			$operationUnlock .= ' <model stock_id="'.$value['stock_id'].'" quantity="'.$value['qty'].'" />';
+		}
+		$operationUnlock .= '</operation>';
+		$operationSet = '<operation type="set">';
+		foreach ($operationData['set'] as $value) {
+			$operationSet .= ' <model stock_id="'.$value['stock_id'].'" quantity="'.$value['qty'].'" />';
+		}
+		$operationSet .= '</operation>';
 		
-		 $brand = $_GET['brand'];		
-		
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$Items = $this->getAllItems($brand);
-		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
-
+		$requestData = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+		<root>
+			$operationLock
+			$operationUnlock
+		</root>';	
+=======
 		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
 	public function getAllItems($brand){
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/ghost/orders/sold",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => $requestData,
 		  CURLOPT_HTTPHEADER => array(
+		    "accept: application/xml",
 		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
 		  ),
-		  CURLOPT_TIMEOUT=> 900000000
 		));
 
 		$response = curl_exec($curl);
@@ -71,12 +122,14 @@ class ContentController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  return "cURL Error #:" . $err;
+		  echo "cURL Error #:" . $err;
 		} else {
-		  	
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
+<<<<<<< HEAD
+		  return $arrayData;
+=======
 			echo $arrayData['items']['item']['availability'];
 			$i=0;
 			if($arrayData['items']['item']){
@@ -164,31 +217,168 @@ class ContentController extends Controller
 	        exit;
 			
 
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		}
-}
-	public function createItem($title){
+	}
+
+	public function lockedOrder(){
+
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/ghost/orders/dropshipping/locked/",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "accept: application/xml",
+		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
+		    "cache-control: no-cache",
+		    "content-type: application/xml"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+		  $xml = simplexml_load_string($response); 
+			$json = json_encode($xml);
+			$arrayData = json_decode($json,TRUE); 
+		  return $arrayData;
+		}
+	}
+	public function acquireOrder($productArray){
+		$productTag = ""; 
+		foreach ($productArray as  $value) { //print_r($value);
+			 $productTag .= ' <product stock_id="'.$value['modelId'].'" quantity="'.$value['qty'].'" />';
+		} 
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/ghost/supplierorder/acquire",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 9000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><supplierorder><products>'.$productTag.'</products></supplierorder>',,
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
+		    "cache-control: no-cache",
+		    "content-type: application/xml"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {		  
+		  return $response;
+		}
+	}
+
+	public function SingleRecipientOrder($recipientData, $stock_id, $qty){
+		$requestData = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<root>
+	<order_list>
+		<order>
+			<key>".$recipientData['order_number']."</key>
+			<date>".$recipientData['date']."</date>
+			<recipient_details>
+				<recipient>".$recipientData['recipient']."</recipient>
+				<careof />
+				<cfpiva></cfpiva>
+				<customer_key></customer_key>
+				<notes></notes>
+				<address>
+					<street_type></street_type>
+					<street_name>".$recipientData['street_name']."</street_name>
+					<address_number>".$recipientData['address_number']."</address_number>
+					<zip>".$recipientData['zip']."</zip>
+					<city>".$recipientData['city']."</city>
+					<province></province>
+					<countrycode>".$recipientData['countrycode']."</countrycode>
+				</address>
+				<phone>
+					<prefix>".$recipientData['prefix']."</prefix>
+					<number>".$recipientData['number']."</number>
+				</phone>
+			</recipient_details>
+			<item_list>
+				<item>
+					<stock_id>".$stock_id."</stock_id>
+					<quantity>".$qty."</quantity>
+				</item>
+			</item_list>			
+		</order>
+	</order_list>
+</root>";
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/ghost/orders/0/dropshipping",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 9000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => $requestData,
+		  CURLOPT_HTTPHEADER => array(
+		    "accept: application/xml",
+		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
+		    "cache-control: no-cache",
+		    "content-type: application/xml"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+		  $xml = simplexml_load_string($response); 
+			$json = json_encode($xml);
+			$arrayData = json_decode($json,TRUE); 
+		  return $arrayData;
+		}
+	}
+	public function order($orderId){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items",
+		  CURLOPT_URL => "https://".$host."/rest/orders/".$orderId."/items",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": 155\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}]\n}",
+		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
-		    "accept: application/json",
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$access_token,
 		    "cache-control: no-cache",
-		    "content-type: application/json"
+		    "postman-token: 77b15284-d14b-3b3f-c085-904253595e91"
 		  ),
-		  CURLOPT_TIMEOUT=> 900000000
 		));
 
 		$response = curl_exec($curl);
@@ -202,86 +392,6 @@ class ContentController extends Controller
 		  return $response;
 		}
 	}
-	public function uploadImage($ItemId, $image, $imagevalue){
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$host = $_SERVER['HTTP_HOST'];
-		$img = $image;
-		$imgName = explode("/",$img);
-		$name[0] = array("lang" => "en","name" => "Red plentymarkets tee");
-    	$availabilities[0] = array("type" => "mandant","value" => "$imagevalue");
-    	$requestdata = Array(
-		    "itemId" => "$ItemId",
-		    "uploadFileName" => "$imgName[2]",
-		    "uploadUrl" => "https://www.brandsdistribution.com".$image,
-		    $name,
-		    $availabilities
-		);
-		  $requestdata = json_encode($requestdata); 
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/images/upload",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		 // CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => $requestdata,
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 900000000
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return $response;
-		}
-	}
-	public function storeItemsToPlanty($Items, $access_token){
-		$host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/item_sets",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => $Items,
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return $response;
-		}
-	}
-
 	public function login(){
 		$host = $_SERVER['HTTP_HOST'];
 		$curl = curl_init();
@@ -313,175 +423,7 @@ class ContentController extends Controller
 		  return $response;
 		}
 	}
-	public function stockManagement(Twig $twig):string
-	{
-		$pageNo = 1;
-		$records = array();
-		$response = $this->updateStock();
-		$array = json_decode($response,TRUE); 
-		$pageNo = $array['page'] + 1;
-		$lastPageNumber = $array['lastPageNumber'];
-		$isLastPage = $array['isLastPage'];
-		$records = $array['entries'];
-		// array_push($records,$array['entries']);
-		/*if ($pageNo > 1) {
-			for ($i=$pageNo; $i < $lastPageNumber; $i++) { 
-				$response = $this->updateStock($i);
-				$array2 = json_decode($response,TRUE); 
-				$pageNo = $array2['page'] + 1;
-				$lastPageNumber = $array2['lastPageNumber'];
-				$isLastPage = $array2['isLastPage'];
-				array_push($records,$array2['entries']);
-			}
-			
-		}else{
-
-		}*/
-		return $twig->render('HelloWorld::content.stockManagement',array('data' => $array));
-		
-	}
-	public function updateStock($pageNo=null){
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$curl = curl_init();
-		if (!empty($pageNo)) {
-			$pageNoString = "page=".$pageNo."&";
-		}else{
-			$pageNoString = '';
-		}
-		$host = $_SERVER['HTTP_HOST'];
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/stockmanagement/stock?".$pageNoString."warehouseId=104",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "GET",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer ".$access_token,
-		    "cache-control: no-cache",
-		    "content-type: application/json",
-		    "postman-token: 8a2c3500-dd2e-6ac7-cc50-637991e0222e"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
-		));
-
-		$response = curl_exec($curl);
-
-		$err = curl_error($curl);
-
-		curl_close($curl);		
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return $response;
-		}
-	}
-
-	public function getOrder($access_token){
-		$host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-
-curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://".$host."/rest/orders",
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => "",
-  CURLOPT_MAXREDIRS => 10,
-  //CURLOPT_TIMEOUT => 30,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "GET",
-  CURLOPT_HTTPHEADER => array(
-    "authorization: Bearer $access_token",
-    "cache-control: no-cache",
-    "postman-token: e35ffc09-3b07-9c0a-11dd-5853d81af683"
-  ),
-  CURLOPT_TIMEOUT=> 90000000
-));
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-
-if ($err) {
-  return "cURL Error #:" . $err;
-} else {
-	$xml = simplexml_load_string($response);
-}
-	}
-
-	public function uploadItemImage($ItemId,$imgUrl){
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/images/upload",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\"itemId\": \"$ItemId\",\"uploadFileName\": \"stock_product_image_97783_673693377.jpg\", \"uploadUrl\": \"https://www.brandsdistribution.com/prod/stock_product_image_97783_673693377.jpg\",\"names\": [{\"lang\": \"en\",\"name\": \"Red plentymarkets tee\"}],\"availabilities\": [{\"type\": \"mandant\",\"value\": 42296}]}",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return json_decode($response,TRUE);
-		}
-	}
-	public function createVariation($ItemId){
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/variations",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "GET",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return json_decode($response,TRUE);
-		}
-	}
-
-	public function linkingBarcode($ItemId, $variationId, $code){
+	public function getVariation($id){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
@@ -490,56 +432,16 @@ if ($err) {
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return $response;
-		}
-	}
-
-	public function ActiveItem($itemId, $variationId, $purchasePrice){
-		//echo $itemId." ".$variationId;exit;
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$host = $_SERVER['HTTP_HOST'];
-
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."",
+		  CURLOPT_URL => "https://".$host."/rest/items/variations?id=".$id,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice \n}",
+		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
+		    "authorization: Bearer ".$access_token,
+		    "cache-control: no-cache"
 		  ),
 		));
 
@@ -551,8 +453,141 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
+		  return $response;
+		}
+	}
+	public function customerDetail($orderId){
+		$login = $this->login();
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		$host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/orders/".$orderId."?with[]=addresses&with[]=relation",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer ".$access_token,
+		    "cache-control: no-cache",
+		    "postman-token: 416bc02e-dffa-1fb1-b443-9fa00dc4c675"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+		  	$response = json_decode($response, TRUE);
+			$detailArray = array();
+			$detailArray['date'] = date('Y/m/d h:i:s')." +0000";
+			$detailArray['recipient'] = $response['addresses'][0]['name1'];			
+			$detailArray['street_name'] = $response['addresses'][0]['address1'];
+			$detailArray['address_number'] = $response['addresses'][0]['address2'];
+			$detailArray['zip'] = $response['addresses'][0]['postalCode'];
+			$detailArray['city'] = $response['addresses'][0]['town'];
+			$countryId = $response['addresses'][0]['countryId'];
+			$countryCode = $this->getCountryCode($countryId);
+			$detailArray['countrycode'] = $countryCode;
+			$prefix = (explode(" ",$response['relations'][1]['contactReceiver']['privatePhone']));
+			$detailArray['prefix'] = $prefix[0];
+			$number = '';
+			foreach ($prefix as $value) {
+				if ($value != $prefix[0]) {
+					$number .= $value;
+				}
+			}
+			$detailArray['number'] = $number;	
+
+		  return $detailArray;
+		}
+	}
+
+	public function getCountryCode($countryId){
+		$login = $this->login();
+		$login = json_decode($login, true);
+		$access_token = $login['access_token'];
+		$host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/orders/shipping/countries",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer ".$access_token,
+		    "cache-control: no-cache"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+			$response = json_decode($response, TRUE);
+			foreach ($response as $value) {
+				if ($value['id'] == "$countryId") {
+					$result = $value['isoCode2'];
+					break;
+				}
+			}
+		  return $result;
+		}
+	}
+
+	public function orderStatusOrderId($orderNumber){
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/ghost/clientorders/serverkey/".$orderNumber,
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 9000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
+		    "cache-control: no-cache"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  return "cURL Error #:" . $err;
+		} else {
+<<<<<<< HEAD
+		  $xml = simplexml_load_string($response); 
+			$json = json_encode($xml);
+			$arrayData = json_decode($json,TRUE); 
+		  return $arrayData;
+=======
 		  // return $response;
 		  return $response;
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		}
 	}
 }
