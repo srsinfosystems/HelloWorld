@@ -15,15 +15,9 @@ class HelloWorldRouteServiceProvider extends RouteServiceProvider
 	 */
 	public function map(Router $router)
 	{
-		$router->get('home', 'HelloWorld\Controllers\ContentController@home');
+		$router->get('getorder', 'ProcedurePlugin\Controllers\ContentController@getorder');
 
-		$router->get('callApi', 'HelloWorld\Controllers\ContentController@sayHello');
 		
-		$router->get('importProduct', 'HelloWorld\Controllers\ContentController@importProduct');
-
-		$router->get('stockManagement', 'HelloWorld\Controllers\ContentController@stockManagement');
-		
-		$router->get('updateStock', 'HelloWorld\Controllers\ContentController@updateStock');
 	}
 
 }
