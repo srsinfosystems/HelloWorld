@@ -81,7 +81,9 @@ class ContentController extends Controller
 			if($arrayData['items']['item']['availability']){
 				echo "single";
 	        } else{
-				echo "multiple";	          
+				foreach ($arrayData['items']['item'] as $value) { 
+					return $value;
+				}          
 	        } 
 	        exit;
 			$arrCheck = $arrayData;
