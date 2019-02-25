@@ -91,9 +91,11 @@ class ContentController extends Controller
 	       			$linkingBarcode = json_decode($linkingBarcode,TRUE);
 	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice']);
+	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $arrayData['items']['item']['models']['model']['id']);
 	      			$activeItem = json_decode($activeItem,TRUE);
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+	       			$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
+            		$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
 
 	       			$no = 0;
 	       				if ($arrayData['items']['item']['pictures']['image']) {
@@ -129,9 +131,11 @@ class ContentController extends Controller
 	       				$linkingBarcode = json_decode($linkingBarcode,TRUE);
 	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice']);
+	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $value['models']['model']['id']);
 	       				$activeItem = json_decode($activeItem,TRUE);
 	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+	       				$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
+            			$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
 
 	       				$no = 0;
 	       				if ($value['pictures']['image']) {
@@ -518,7 +522,7 @@ if ($err) {
 		}
 	}
 
-	public function ActiveItem($itemId, $variationId, $purchasePrice){
+	public function ActiveItem($itemId, $variationId, $purchasePrice, $modelid){
 		//echo $itemId." ".$variationId;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
@@ -535,7 +539,7 @@ if ($err) {
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice \n}",
+		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$modelid\"\n}",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
