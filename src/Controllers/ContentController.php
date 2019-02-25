@@ -77,7 +77,8 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
-			if(!empty($array['items']['item']['availability'])){
+			echo $array['items']['item']['availability'];
+			if($array['items']['item']['availability']){
 				echo "single";
 	        } else{
 				echo "multiple";	          
