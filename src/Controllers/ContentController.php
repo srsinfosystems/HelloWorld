@@ -115,6 +115,7 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
+				    	return $ItemResponseArray;
 		        } else{
 					foreach ($arrayData['items']['item'] as $value) { 
 						$ItemResponse = $this->createItem($value['name']);
