@@ -78,6 +78,7 @@ class ContentController extends Controller
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
 			echo $arrayData['items']['item']['availability'];
+			$i=0;
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					echo "single";
@@ -153,7 +154,7 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
-						
+						$i++;
 					} 
 					return $ItemResponseArray;         
 		        } 
