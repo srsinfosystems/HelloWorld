@@ -96,14 +96,14 @@ class ContentController extends Controller
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 
 	       			$no = 0;
-	       				if ($arrayData['pictures']['image']) {
+	       				if ($arrayData['items']['item']['pictures']['image']) {
 	       				
-		       				if ($arrayData['pictures']['image']['id']) {
-		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$arrayData['pictures']['image']['url'], $arrayData['pictures']['image']['id']);
-		       						$ItemResponseArray[$i]['images'][$no]['id'] = $arrayData['pictures']['image']['id'];
-					                $ItemResponseArray[$i]['images'][$no]['url'] = $arrayData['pictures']['image']['url'];
+		       				if ($arrayData['items']['item']['pictures']['image']['id']) {
+		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$arrayData['items']['item']['pictures']['image']['url'], $arrayData['items']['item']['pictures']['image']['id']);
+		       						$ItemResponseArray[$i]['images'][$no]['id'] = $arrayData['items']['item']['pictures']['image']['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $arrayData['items']['item']['pictures']['image']['url'];
 		       				}else{
-					            foreach ($arrayData['pictures']['image'] as $picture) {                
+					            foreach ($arrayData['items']['item']['pictures']['image'] as $picture) {                
 					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 					                // echo $ImageResponse;exit;
 					                $ImageResponse = json_decode($ImageResponse,TRUE);
