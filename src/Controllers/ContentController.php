@@ -81,6 +81,40 @@ class ContentController extends Controller
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					echo "single";
+					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);           
+	       			$ItemResponse = json_decode($ItemResponse,TRUE);
+	       			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       			$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
+
+	       			$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+	       			$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+
+	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice']);
+	      			$activeItem = json_decode($activeItem,TRUE);
+	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+
+	       			$no = 0;
+	       				if ($arrayData['pictures']['image']) {
+	       				
+		       				if ($arrayData['pictures']['image']['id']) {
+		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$arrayData['pictures']['image']['url'], $arrayData['pictures']['image']['id']);
+		       						$ItemResponseArray[$i]['images'][$no]['id'] = $arrayData['pictures']['image']['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $arrayData['pictures']['image']['url'];
+		       				}else{
+					            foreach ($arrayData['pictures']['image'] as $picture) {                
+					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+					                // echo $ImageResponse;exit;
+					                $ImageResponse = json_decode($ImageResponse,TRUE);
+					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+					                $no++;
+					            }
+					        }
+				    	}else{
+				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
+					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
+				    	}
 		        } else{
 					foreach ($arrayData['items']['item'] as $value) { 
 						$ItemResponse = $this->createItem($value['name']);
@@ -118,8 +152,9 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
-						return $ItemResponseArray;
-					}          
+						
+					} 
+					return $ItemResponseArray;         
 		        } 
 		    }else{
 		    	echo "No product  found";
@@ -515,7 +550,7 @@ if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
 		  // return $response;
-		  return "true";
+		  return $response;
 		}
 	}
 }
