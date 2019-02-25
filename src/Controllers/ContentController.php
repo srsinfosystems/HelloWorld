@@ -64,6 +64,7 @@ class ContentController extends Controller
 
 		$orderStatusOrderId = $this->orderStatusOrderId($acquireOrder);
 
+<<<<<<< HEAD
 		return $twig->render('HelloWorld::content.getorder',array('data' => $acquireOrder));
 	}
 
@@ -89,6 +90,13 @@ class ContentController extends Controller
 			$operationLock
 			$operationUnlock
 		</root>';	
+=======
+		$data = json_encode($Items);
+		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
+	}
+	public function getAllItems($brand){
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -119,7 +127,97 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
+<<<<<<< HEAD
 		  return $arrayData;
+=======
+			echo $arrayData['items']['item']['availability'];
+			$i=0;
+			if($arrayData['items']['item']){
+				if($arrayData['items']['item']['availability']){
+					echo "single";
+					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);           
+	       			$ItemResponse = json_decode($ItemResponse,TRUE);
+	       			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       			$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
+
+	       			$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+	       			$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+
+	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice']);
+	      			$activeItem = json_decode($activeItem,TRUE);
+	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+
+	       			$no = 0;
+	       				if ($arrayData['pictures']['image']) {
+	       				
+		       				if ($arrayData['pictures']['image']['id']) {
+		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$arrayData['pictures']['image']['url'], $arrayData['pictures']['image']['id']);
+		       						$ItemResponseArray[$i]['images'][$no]['id'] = $arrayData['pictures']['image']['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $arrayData['pictures']['image']['url'];
+		       				}else{
+					            foreach ($arrayData['pictures']['image'] as $picture) {                
+					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+					                // echo $ImageResponse;exit;
+					                $ImageResponse = json_decode($ImageResponse,TRUE);
+					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+					                $no++;
+					            }
+					        }
+				    	}else{
+				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
+					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
+				    	}
+				    	return $ItemResponseArray;
+		        } else{
+					foreach ($arrayData['items']['item'] as $value) { 
+						$ItemResponse = $this->createItem($value['name']);
+	          
+	          			$ItemResponse = json_decode($ItemResponse,TRUE);
+	          			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
+	       				$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
+
+	       				$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
+	       				$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+
+	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice']);
+	       				$activeItem = json_decode($activeItem,TRUE);
+	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
+
+	       				$no = 0;
+	       				if ($value['pictures']['image']) {
+	       				
+		       				if ($value['pictures']['image']['id']) {
+		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$value['pictures']['image']['url'], $value['pictures']['image']['id']);
+		       						$ItemResponseArray[$i]['images'][$no]['id'] = $value['pictures']['image']['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $value['pictures']['image']['url'];
+		       				}else{
+					            foreach ($value['pictures']['image'] as $picture) {                
+					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
+					                // echo $ImageResponse;exit;
+					                $ImageResponse = json_decode($ImageResponse,TRUE);
+					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
+					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
+					                $no++;
+					            }
+					        }
+				    	}else{
+				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
+					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
+				    	}
+						$i++;
+					} 
+					return $ItemResponseArray;         
+		        } 
+		    }else{
+		    	echo "No product  found";
+		    }
+	        exit;
+			
+
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		}
 	}
 
@@ -481,10 +579,15 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
+<<<<<<< HEAD
 		  $xml = simplexml_load_string($response); 
 			$json = json_encode($xml);
 			$arrayData = json_decode($json,TRUE); 
 		  return $arrayData;
+=======
+		  // return $response;
+		  return $response;
+>>>>>>> bff084d3594bba0d083e26ad5105d8439f069cf1
 		}
 	}
 }
