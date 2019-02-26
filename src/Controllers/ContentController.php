@@ -107,7 +107,7 @@ class ContentController extends Controller
 	      			$ItemDiscription = $this->ItemDiscription($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['name'], $arrayData['items']['item']['description']);
 	      			
 	      			$ItemResponseArray[$i]['Item']['name'] = $ItemDiscription['name'];
-	      			$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'];
+	      			$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'][0];
 
 
 	       			$no = 0;
@@ -165,7 +165,7 @@ class ContentController extends Controller
 
 	      				$ItemDiscription = $this->ItemDiscription($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['name'], $value['description']);
 	      				$ItemResponseArray[$i]['Item']['name'] = $ItemDiscription['name'];
-	      				$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'];
+	      				$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'][0];
 	       				$no = 0;
 	       				if ($value['pictures']['image']) {
 	       				
