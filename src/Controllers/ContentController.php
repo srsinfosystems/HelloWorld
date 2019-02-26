@@ -701,17 +701,18 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
+			echo $response;
 		  $response = json_decode($response, TRUE);
 		  $modelNos = array();
 		  $i=0;
 		  foreach ($response['entries'] as $value) {
-		  	echo "outer ".$value['model']."== ";
+		  	echo "outer ".$value."== ";
 		  	if (!empty($value['model'])) {
 		  	echo "inner ".$value['model']." ";
 		  		$modelNos[$i] = $value['model'];
 		  		$i++;
 		  	}		  	
-		  }
+		  }exit;
 		  return $modelNos;
 		}
 	}
