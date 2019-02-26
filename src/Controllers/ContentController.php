@@ -41,12 +41,12 @@ class ContentController extends Controller
 		$access_token = $login['access_token'];
 
 		$modelNoArray = $this->getAllModelNo();
-		$Items = $this->getAllItems($brand, $modelNoArray);
+		//$Items = $this->getAllItems($brand, $modelNoArray);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
-		$data = json_encode($Items);
+		//$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $modelNoArray));
 	}
 	public function getAllItems($brand, $modelNoArray){
 		$curl = curl_init();
