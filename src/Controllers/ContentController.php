@@ -85,7 +85,7 @@ class ContentController extends Controller
 		        return;
 		      foreach($arrayData['items']['item'] as $items) {
 		        if(is_array($items)) {
-		          print_r($items);
+		          return(json_encode($items));
 		          foreach ($items as $item) {           
 		            //insert_into_plenty($item);
 		          }
@@ -96,7 +96,7 @@ class ContentController extends Controller
 		        
 
 		      }exit;
-			
+
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					// echo "single";
