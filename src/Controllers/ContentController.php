@@ -92,7 +92,7 @@ class ContentController extends Controller
 
 	      			}
 					echo "single".$modelId;exit;
-					if (!in_array($modelId, $modelNoArray)) {
+					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
 	       			
@@ -158,7 +158,7 @@ class ContentController extends Controller
 		      			}
 					echo "multiple".$modelId;exit;
 						
-					if (!in_array($modelId, $modelNoArray)) {
+					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
 
 						$ItemResponse = $this->createItem($value['name']);	          
 	          			
