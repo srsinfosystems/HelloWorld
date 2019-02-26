@@ -46,7 +46,7 @@ class ContentController extends Controller
 
 		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $modelNoArray));
 	}
 	public function getAllItems($brand, $modelNoArray){
 		$curl = curl_init();
@@ -91,7 +91,7 @@ class ContentController extends Controller
 	      				}
 
 	      			}
-					
+					echo "single".$modelId;
 					if (!in_array($modelId, $modelNoArray)) {
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
@@ -156,6 +156,7 @@ class ContentController extends Controller
 		      				}
 
 		      			}
+					echo "multiple".$modelId;
 						
 					if (!in_array($modelId, $modelNoArray)) {
 
