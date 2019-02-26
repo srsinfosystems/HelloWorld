@@ -151,7 +151,7 @@ class ContentController extends Controller
 		      				if ($value['models']['model']['id']) {
 		      					$modelId = $value['models']['model']['id'];
 		      				}else{
-		      					$modelId = $avalue['models']['model'][0]['id'];
+		      					$modelId = $value['models']['model'][0]['id'];
 		      				}
 
 		      			}
