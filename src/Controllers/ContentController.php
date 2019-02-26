@@ -80,26 +80,23 @@ class ContentController extends Controller
 			$arrayData = json_decode($json,TRUE); 
 			//echo $arrayData['items']['item']['availability'];
 			$i=0;
-			//
+			
 			if(empty($arrayData['items']['item']))
-				return;
-			foreach($arrayData['items']['item'] as $items) {
-				if(is_array($items)) {
-					return json_encode($items);
-					foreach ($items as $item) {						
-						//insert_into_plenty($item);
-					}
-				}
-				else {
+		        return;
+		      foreach($arrayData['items']['item'] as $items) {
+		        if(is_array($items)) {
+		          print_r($items);
+		          foreach ($items as $item) {           
+		            //insert_into_plenty($item);
+		          }
+		        }
+		        else {
+		          echo "not an array";exit;
+		        }
+		        
 
-				}
-				
-
-			}
-
-
-
-			//
+		      }exit;
+			
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					// echo "single";
