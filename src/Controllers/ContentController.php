@@ -40,15 +40,15 @@ class ContentController extends Controller
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 
-		
-		$Items = $this->getAllItems($brand);
+		$modelNoArray = $this->getAllModelNo();
+		$Items = $this->getAllItems($brand, $modelNoArray);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
 		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
-	public function getAllItems($brand){
+	public function getAllItems($brand, $modelNoArray){
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -80,23 +80,6 @@ class ContentController extends Controller
 			$arrayData = json_decode($json,TRUE); 
 			//echo $arrayData['items']['item']['availability'];
 			$i=0;
-			
-			if(empty($arrayData['items']['item']))
-		        return;
-		      foreach($arrayData['items']['item'] as $items) {
-		        if(is_array($items)) {
-		          return(json_encode($items));
-		          foreach ($items as $item) {           
-		            //insert_into_plenty($item);
-		          }
-		        }
-		        else {
-		          echo "not an array";exit;
-		        }
-		        
-
-		      }exit;
-
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					// echo "single";
@@ -108,7 +91,7 @@ class ContentController extends Controller
 	      				}
 
 	      			}
-					
+					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
 	       			
@@ -160,7 +143,7 @@ class ContentController extends Controller
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
 				    	return $ItemResponseArray;
-				    
+				    }
 		        } else{
 
 					foreach ($arrayData['items']['item'] as $value) { 
@@ -174,7 +157,8 @@ class ContentController extends Controller
 		      			}
 					
 						
-					
+					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
+
 						$ItemResponse = $this->createItem($value['name']);	          
 	          			
 	          			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
@@ -222,7 +206,7 @@ class ContentController extends Controller
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
 						$i++;
-					
+					}
 					return $ItemResponseArray; 
 					} 
 					return $ItemResponseArray;         
@@ -649,7 +633,7 @@ if ($err) {
 		  return (json_decode($response,TRUE));
 		}
 	}
-	public function getAllModelNo($pageNo){
+	public function getAllModelNo(){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
@@ -687,7 +671,6 @@ if ($err) {
 		}
 	}
 	public function getVariationModelNos($itemId){
-
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
@@ -717,20 +700,14 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-			echo $response;
 		  $response = json_decode($response, TRUE);
 		  $modelNos = array();
-		  $i=0;
-		  echo $response['entries']['model']." ";
-		  /*foreach ($response as $value) {
-		  	//echo "outer ".$value."== ";
+		  foreach ($response['entries'] as $value) {
 		  	if (!empty($value['model'])) {
-		  	//echo "inner ".$value['model']." ";
-		  		$modelNos[$i] = $value['model'];
-		  		$i++;
+		  		array_push($modelNos, $value['model']);
 		  	}		  	
-		  }*/
-		  return $response['entries']['model'];
+		  }
+		  return $modelNos;
 		}
 	}
 	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
