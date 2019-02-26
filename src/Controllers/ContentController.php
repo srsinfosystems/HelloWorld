@@ -671,7 +671,7 @@ if ($err) {
 		}
 	}
 	public function getVariationModelNos($itemId){
-		echo $itemId;exit;
+
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
@@ -704,10 +704,13 @@ if ($err) {
 		  $response = json_decode($response, TRUE);
 		  $modelNos = array();
 		  foreach ($response['entries'] as $value) {
+		  	echo "outer ".$value['model']."== ";
 		  	if (!empty($value['model'])) {
+		  	echo "inner ".$value['model']." ";
+
 		  		array_push($modelNos, $value['model']);
 		  	}		  	
-		  }
+		  }exit;
 		  return $modelNos;
 		}
 	}
