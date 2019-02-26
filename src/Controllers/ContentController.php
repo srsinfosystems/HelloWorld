@@ -148,11 +148,11 @@ class ContentController extends Controller
 		        } else{
 
 					foreach ($arrayData['items']['item'] as $value) { 
-						if ($arrayData['items']['item']['models']['model']) {
-		      				if ($arrayData['items']['item']['models']['model']['id']) {
-		      					$modelId = $arrayData['items']['item']['models']['model']['id'];
+						if ($value['models']['model']) {
+		      				if ($value['models']['model']['id']) {
+		      					$modelId = $value['models']['model']['id'];
 		      				}else{
-		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
+		      					$modelId = $avalue['models']['model'][0]['id'];
 		      				}
 
 		      			}
