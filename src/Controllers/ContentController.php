@@ -666,7 +666,7 @@ if ($err) {
 		  $response = json_decode($response, TRUE);
 		  foreach ($response['entries'] as $value) {
 		  	$modelNos = $this->getVariationModelNos($value['id']);		  	
-		  }
+		  }exit;
 		  return $modelNos;
 		}
 	}
@@ -703,14 +703,15 @@ if ($err) {
 		} else {
 		  $response = json_decode($response, TRUE);
 		  $modelNos = array();
+		  $i=0;
 		  foreach ($response['entries'] as $value) {
 		  	echo "outer ".$value['model']."== ";
 		  	if (!empty($value['model'])) {
 		  	echo "inner ".$value['model']." ";
-
-		  		array_push($modelNos, $value['model']);
+		  		$modelNos[$i] = $value['model'];
+		  		$i++;
 		  	}		  	
-		  }exit;
+		  }
 		  return $modelNos;
 		}
 	}
