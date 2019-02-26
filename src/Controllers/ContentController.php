@@ -56,15 +56,14 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Basic MTg0Y2U4Y2YtMmM5ZC00ZGU4LWI0YjEtMmZkNjcxM2RmOGNkOlN1cmZlcjc2",
 		    "cache-control: no-cache",
 		    "content-type: application/xml"
-		  ),
-		  CURLOPT_TIMEOUT=> 900000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -87,27 +86,26 @@ class ContentController extends Controller
 					$modelNo = $arrayData['items']['item']['models']['model']['id'];
 					if (!in_array($modelNo, $modelNoArray)) {
 					
-					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);           
-	       			$ItemResponse = json_decode($ItemResponse,TRUE);
+					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
+	       			
 	       			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
 	       			$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
 
 	       			$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
-	       			$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       			
 	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
 	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $arrayData['items']['item']['models']['model']['id']);
-	      			$activeItem = json_decode($activeItem,TRUE);
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       			$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
             		$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
             		$setSKU = $this->setSKU($ItemResponse['id'], $ItemResponse['mainVariationId']);
-	      			$setSKU = json_decode($setSKU,TRUE);
+	      			
 	      			$ItemResponseArray[$i]['sku']['initialSku'] = $setSKU['initialSku'];
 	      			$ItemResponseArray[$i]['sku']['sku'] = $setSKU['sku'];
 
 	      			$ItemDiscription = $this->ItemDiscription($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['name'], $arrayData['items']['item']['description']);
-	      			$ItemDiscription = json_decode($ItemDiscription,TRUE);
+	      			
 	      			$ItemResponseArray[$i]['Item']['name'] = $ItemDiscription['name'];
 	      			$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'];
 
@@ -117,7 +115,7 @@ class ContentController extends Controller
 	       				
 		       				if ($arrayData['items']['item']['pictures']['image']['id']) {
 		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$arrayData['items']['item']['pictures']['image']['url'], $arrayData['items']['item']['pictures']['image']['id']);
-		       						$ImageResponse = json_decode($ImageResponse,TRUE);
+		       						
 		       						 $islink = $this->LinkImageTOVariation($ItemResponse['id'], $ItemResponse['mainVariationId'],$ImageResponse['id']);
 		       						$ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
 					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
@@ -126,7 +124,6 @@ class ContentController extends Controller
 					            foreach ($arrayData['items']['item']['pictures']['image'] as $picture) {                
 					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 					                // echo $ImageResponse;exit;
-					                $ImageResponse = json_decode($ImageResponse,TRUE);
 					                $islink = $this->LinkImageTOVariation($ItemResponse['id'], $ItemResponse['mainVariationId'],$ImageResponse['id']);
 					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
 					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
@@ -147,29 +144,26 @@ class ContentController extends Controller
 						$modelNo = $value['models']['model']['id'];
 					if (!in_array($modelNo, $modelNoArray)) {
 
-						$ItemResponse = $this->createItem($value['name']);
-	          
-	          			$ItemResponse = json_decode($ItemResponse,TRUE);
+						$ItemResponse = $this->createItem($value['name']);	          
+	          			
 	          			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
 	       				$ItemResponseArray[$i]['variation']['VariationId'] = $ItemResponse['mainVariationId'];
 
 	       				$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
-	       				$linkingBarcode = json_decode($linkingBarcode,TRUE);
+	       				
 	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
 	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $value['models']['model']['id']);
-	       				$activeItem = json_decode($activeItem,TRUE);
+	       				
 	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       				$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
             			$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
 
             			$setSKU = $this->setSKU($ItemResponse['id'], $ItemResponse['mainVariationId']);
-	      				$setSKU = json_decode($setSKU,TRUE);
 	      				$ItemResponseArray[$i]['sku']['initialSku'] = $setSKU['initialSku'];
 	      				$ItemResponseArray[$i]['sku']['sku'] = $setSKU['sku'];
 
 	      				$ItemDiscription = $this->ItemDiscription($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['name'], $value['description']);
-	      				$ItemDiscription = json_decode($ItemDiscription,TRUE);
 	      				$ItemResponseArray[$i]['Item']['name'] = $ItemDiscription['name'];
 	      				$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'];
 	       				$no = 0;
@@ -177,7 +171,6 @@ class ContentController extends Controller
 	       				
 		       				if ($value['pictures']['image']['id']) {
 		       					$ImageResponse = $this->uploadImage($ItemResponse['id'],$value['pictures']['image']['url'], $value['pictures']['image']['id']);
-		       						$ImageResponse = json_decode($ImageResponse,TRUE);
 		       						$islink = $this->LinkImageTOVariation($ItemResponse['id'], $ItemResponse['mainVariationId'],$ImageResponse['id']);
 		       						$ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
 					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
@@ -186,7 +179,6 @@ class ContentController extends Controller
 					            foreach ($value['pictures']['image'] as $picture) {                
 					                $ImageResponse = $this->uploadImage($ItemResponse['id'],$picture['url'], $picture['id']);
 					                // echo $ImageResponse;exit;
-					                $ImageResponse = json_decode($ImageResponse,TRUE);
 					                $islink = $this->LinkImageTOVariation($ItemResponse['id'], $ItemResponse['mainVariationId'],$ImageResponse['id']);
 					               $ItemResponseArray[$i]['images'][$no]['id'] = $ImageResponse['id'];
 					                $ItemResponseArray[$i]['images'][$no]['url'] = $ImageResponse['url'];
@@ -224,7 +216,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": 155\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}]\n}",
@@ -233,8 +225,7 @@ class ContentController extends Controller
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
 		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 900000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -245,7 +236,7 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return (json_decode($response,TRUE));
 		}
 	}
 	public function uploadImage($ItemId, $image, $imagevalue){
@@ -272,7 +263,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		 // CURLOPT_TIMEOUT => 30,
+		 CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => $requestdata,
@@ -280,8 +271,7 @@ class ContentController extends Controller
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
 		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 900000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -292,7 +282,7 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return (json_decode($response,TRUE));
 		}
 	}
 	public function storeItemsToPlanty($Items, $access_token){
@@ -304,7 +294,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => $Items,
@@ -312,8 +302,7 @@ class ContentController extends Controller
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
 		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -336,7 +325,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "username=API-USER&password=%5BnWu%3Bx%3E8Eny%3BbSs%40",
@@ -344,8 +333,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/x-www-form-urlencoded",
 		    "postman-token: 49a8d541-073c-8569-b3c3-76319f67e552"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -402,7 +390,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -410,8 +398,7 @@ class ContentController extends Controller
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		    "postman-token: 8a2c3500-dd2e-6ac7-cc50-637991e0222e"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -436,15 +423,14 @@ curl_setopt_array($curl, array(
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
-  //CURLOPT_TIMEOUT => 30,
+  CURLOPT_TIMEOUT => 900000000,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
   CURLOPT_HTTPHEADER => array(
     "authorization: Bearer $access_token",
     "cache-control: no-cache",
     "postman-token: e35ffc09-3b07-9c0a-11dd-5853d81af683"
-  ),
-  CURLOPT_TIMEOUT=> 90000000
+  )
 ));
 
 $response = curl_exec($curl);
@@ -470,7 +456,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\"itemId\": \"$ItemId\",\"uploadFileName\": \"stock_product_image_97783_673693377.jpg\", \"uploadUrl\": \"https://www.brandsdistribution.com/prod/stock_product_image_97783_673693377.jpg\",\"names\": [{\"lang\": \"en\",\"name\": \"Red plentymarkets tee\"}],\"availabilities\": [{\"type\": \"mandant\",\"value\": 42296}]}",
@@ -478,8 +464,7 @@ if ($err) {
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
 		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -505,14 +490,13 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -540,7 +524,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  //CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
@@ -548,8 +532,7 @@ if ($err) {
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
 		    "content-type: application/json"
-		  ),
-		  CURLOPT_TIMEOUT=> 90000000
+		  )
 		));
 
 		$response = curl_exec($curl);
@@ -560,7 +543,7 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return (json_decode($response,TRUE));
 		}
 	}
 
@@ -578,7 +561,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$modelid\"\n}",
@@ -596,9 +579,8 @@ if ($err) {
 
 		if ($err) {
 		  return "cURL Error #:" . $err;
-		} else {
-		  // return $response;
-		  return $response;
+		} else {		  
+		  return (json_decode($response,TRUE));
 		}
 	}
 	public function setSKU($itemId, $variationNo){
@@ -614,7 +596,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n\t\"variationId\": $variationNo,\n\t\"marketId\": 2,\n\t\"accountId\": 2,\n\t\"initialSku\": $variationNo,\n\t\"sku\": $variationNo,\n\t\"isActive\": true,\n\t\"status\": \"ACTIVE\"\n}",
@@ -633,7 +615,7 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return (json_decode($response,TRUE));
 		}
 	}
 	public function getAllModelNo(){
@@ -649,7 +631,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -686,7 +668,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -726,7 +708,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\"itemId\": $itemId,\"lang\": \"en\",\"name\": \"$ItemName\",\"description\": \"$discription\"}",
@@ -745,7 +727,7 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return $response;
+		  return (json_decode($response,TRUE));
 		}
 	}
 	public function LinkImageTOVariation($itemId, $variationId, $imageId){
@@ -761,7 +743,7 @@ if ($err) {
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\"variationId\": $variationId,\"itemId\": $itemId,\"imageId\": $imageId}",
