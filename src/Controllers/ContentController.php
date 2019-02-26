@@ -701,18 +701,20 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
+			echo $response;
 		  $response = json_decode($response, TRUE);
 		  $modelNos = array();
 		  $i=0;
-		  foreach ($response as $value) {
-		  	echo "outer ".$value."== ";
+		  echo $response['entries']['model']." ";
+		  /*foreach ($response as $value) {
+		  	//echo "outer ".$value."== ";
 		  	if (!empty($value['model'])) {
-		  	echo "inner ".$value['model']." ";
+		  	//echo "inner ".$value['model']." ";
 		  		$modelNos[$i] = $value['model'];
 		  		$i++;
 		  	}		  	
-		  }
-		  return $response;
+		  }*/
+		  return $response['entries']['model'];
 		}
 	}
 	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
