@@ -99,7 +99,7 @@ class ContentController extends Controller
 	      				if ($arrayData['items']['item']['models']['model']['id']) {
 	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
 	      				}else{
-	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id']
+	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
 	      				}
 
 	      			}
@@ -164,7 +164,7 @@ class ContentController extends Controller
 		      				if ($arrayData['items']['item']['models']['model']['id']) {
 		      					$modelId = $arrayData['items']['item']['models']['model']['id'];
 		      				}else{
-		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id']
+		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
 		      				}
 
 		      			}
