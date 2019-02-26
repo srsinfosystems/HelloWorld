@@ -95,7 +95,16 @@ class ContentController extends Controller
 	       			
 	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $arrayData['items']['item']['models']['model']['id']);
+	       			if ($arrayData['items']['item']['models']['model']) {
+	      				if ($arrayData['items']['item']['models']['model']['id']) {
+	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
+	      				}else{
+	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id']
+	      				}
+
+	      			}
+
+	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $modelId);
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       			$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
             		$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
@@ -108,7 +117,6 @@ class ContentController extends Controller
 	      			
 	      			$ItemResponseArray[$i]['Item']['name'] = $ItemDiscription['name'];
 	      			$ItemResponseArray[$i]['Item']['discription'] = $ItemDiscription['description'][0];
-
 
 	       			$no = 0;
 	       				if ($arrayData['items']['item']['pictures']['image']) {
@@ -152,8 +160,15 @@ class ContentController extends Controller
 	       				$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
 	       				
 	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
+	       				if ($arrayData['items']['item']['models']['model']) {
+		      				if ($arrayData['items']['item']['models']['model']['id']) {
+		      					$modelId = $arrayData['items']['item']['models']['model']['id'];
+		      				}else{
+		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id']
+		      				}
 
-	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $value['models']['model']['id']);
+		      			}
+	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $modelId);
 	       				
 	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       				$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
