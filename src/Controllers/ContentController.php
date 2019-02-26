@@ -91,7 +91,7 @@ class ContentController extends Controller
 	      				}
 
 	      			}
-					echo "single".$modelId;
+					echo "single".$modelId;exit;
 					if (!in_array($modelId, $modelNoArray)) {
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
@@ -156,7 +156,7 @@ class ContentController extends Controller
 		      				}
 
 		      			}
-					echo "multiple".$modelId;
+					echo "multiple".$modelId;exit;
 						
 					if (!in_array($modelId, $modelNoArray)) {
 
