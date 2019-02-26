@@ -41,12 +41,12 @@ class ContentController extends Controller
 		$access_token = $login['access_token'];
 
 		$modelNoArray = $this->getAllModelNo();
-		//$Items = $this->getAllItems($brand, $modelNoArray);
+		$Items = $this->getAllItems($brand, $modelNoArray);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
-		//$data = json_encode($Items);
+		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $modelNoArray));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
 	public function getAllItems($brand, $modelNoArray){
 		$curl = curl_init();
@@ -83,8 +83,16 @@ class ContentController extends Controller
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					// echo "single";
-					$modelNo = $arrayData['items']['item']['models']['model']['id'];
-					if (!in_array($modelNo, $modelNoArray)) {
+					if ($arrayData['items']['item']['models']['model']) {
+	      				if ($arrayData['items']['item']['models']['model']['id']) {
+	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
+	      				}else{
+	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
+	      				}
+
+	      			}
+					
+					if (!in_array($modelId, $modelNoArray)) {
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
 	       			
@@ -95,15 +103,7 @@ class ContentController extends Controller
 	       			
 	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       			if ($arrayData['items']['item']['models']['model']) {
-	      				if ($arrayData['items']['item']['models']['model']['id']) {
-	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
-	      				}else{
-	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
-	      				}
-
-	      			}
-
+	       			
 	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $modelId);
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       			$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
@@ -148,9 +148,16 @@ class ContentController extends Controller
 		        } else{
 
 					foreach ($arrayData['items']['item'] as $value) { 
+						if ($arrayData['items']['item']['models']['model']) {
+		      				if ($arrayData['items']['item']['models']['model']['id']) {
+		      					$modelId = $arrayData['items']['item']['models']['model']['id'];
+		      				}else{
+		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
+		      				}
 
-						$modelNo = $value['models']['model']['id'];
-					if (!in_array($modelNo, $modelNoArray)) {
+		      			}
+						
+					if (!in_array($modelId, $modelNoArray)) {
 
 						$ItemResponse = $this->createItem($value['name']);	          
 	          			
@@ -160,14 +167,7 @@ class ContentController extends Controller
 	       				$linkingBarcode = $this->linkingBarcode($ItemResponse['id'], $ItemResponse['mainVariationId'], rand(10,1000000));
 	       				
 	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
-	       				if ($arrayData['items']['item']['models']['model']) {
-		      				if ($arrayData['items']['item']['models']['model']['id']) {
-		      					$modelId = $arrayData['items']['item']['models']['model']['id'];
-		      				}else{
-		      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
-		      				}
-
-		      			}
+	       				
 	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $modelId);
 	       				
 	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
