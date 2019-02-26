@@ -40,13 +40,13 @@ class ContentController extends Controller
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 
-		$modelNoArray = $this->getAllModelNo();
-		//$Items = $this->getAllItems($brand, $modelNoArray);
+		// $modelNoArray = $this->getAllModelNo();
+		$Items = $this->getAllItems($brand, $modelNoArray);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
-		//$data = json_encode($Items);
+		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $modelNoArray));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
 	public function getAllItems($brand, $modelNoArray){
 		$curl = curl_init();
@@ -80,6 +80,26 @@ class ContentController extends Controller
 			$arrayData = json_decode($json,TRUE); 
 			//echo $arrayData['items']['item']['availability'];
 			$i=0;
+			//
+			if(empty($arrayData['items']['item']))
+				return;
+			foreach($arrayData['items']['item'] as $items) {
+				if(is_array($items)) {
+					return json_encode($items);
+					foreach ($items as $item) {						
+						//insert_into_plenty($item);
+					}
+				}
+				else {
+
+				}
+				
+
+			}
+
+
+
+			//
 			if($arrayData['items']['item']){
 				if($arrayData['items']['item']['availability']){
 					// echo "single";
@@ -633,7 +653,7 @@ if ($err) {
 		  return (json_decode($response,TRUE));
 		}
 	}
-	public function getAllModelNo(){
+	public function getAllModelNo($pageNo){
 		$login = $this->login();
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
