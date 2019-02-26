@@ -40,7 +40,7 @@ class ContentController extends Controller
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 
-		// $modelNoArray = $this->getAllModelNo();
+		
 		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
