@@ -666,7 +666,7 @@ if ($err) {
 		  $response = json_decode($response, TRUE);
 		  foreach ($response['entries'] as $value) {
 		  	$modelNos = $this->getVariationModelNos($value['id']);		  	
-		  }exit;
+		  }
 		  return $modelNos;
 		}
 	}
