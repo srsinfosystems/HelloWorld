@@ -41,14 +41,14 @@ class ContentController extends Controller
 		$access_token = $login['access_token'];
 
 		// $modelNoArray = $this->getAllModelNo();
-		$Items = $this->getAllItems($brand, $modelNoArray);
+		$Items = $this->getAllItems($brand);
 		//$Item = "{\"2\":{\"id\":\"98084\",\"name\":\"5526\",\"categories\":[{\"categoryId\":33}]}}";
 
 		$data = json_encode($Items);
 		//$storeItemsToPlenty = $this->storeItemsToPlanty($Items, $access_token);
 		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
-	public function getAllItems($brand, $modelNoArray){
+	public function getAllItems($brand){
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -111,7 +111,7 @@ class ContentController extends Controller
 	      				}
 
 	      			}
-					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
+					
 					
 					$ItemResponse = $this->createItem($arrayData['items']['item']['name']);    
 	       			
@@ -163,7 +163,7 @@ class ContentController extends Controller
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
 				    	return $ItemResponseArray;
-				    }
+				    
 		        } else{
 
 					foreach ($arrayData['items']['item'] as $value) { 
@@ -177,8 +177,7 @@ class ContentController extends Controller
 		      			}
 					
 						
-					if (!in_array($modelId, $modelNoArray) || empty($modelNoArray)) {
-
+					
 						$ItemResponse = $this->createItem($value['name']);	          
 	          			
 	          			$ItemResponseArray[$i]['Item']['id'] = $ItemResponse['id'];
@@ -226,7 +225,7 @@ class ContentController extends Controller
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
 						$i++;
-					}
+					
 					return $ItemResponseArray; 
 					} 
 					return $ItemResponseArray;         
