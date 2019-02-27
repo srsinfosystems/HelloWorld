@@ -815,7 +815,7 @@ if ($err) {
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
-		$requestdata = '{
+		$requestdata = {
 				"name": "'.$value['code'].'",
 			    "itemId": '.$itemId.',
 			    "isActive": true,
@@ -840,7 +840,7 @@ if ($err) {
 			            "plentyId": 42296
 			        }
 			  ]
-			}';
+			};
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
