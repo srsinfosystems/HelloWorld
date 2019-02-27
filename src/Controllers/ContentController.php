@@ -867,7 +867,7 @@ if ($err) {
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  return (json_decode($response, TRUE);
+		  return (json_decode($response, TRUE));
 		}
 	}
 	public function multiModel($arrayData){
