@@ -815,11 +815,12 @@ if ($err) {
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
+
 		$requestdata = {
-				"name": "'.$value['code'].'",
-			    "itemId": '.$itemId.',
+				"name": "$value['code']",
+			    "itemId": $itemId,
 			    "isActive": true,
-			    "model": "'.$value['id'].'",
+			    "model": "$value['id']",
 			    "mainWarehouseId": 104,
 			    "unit": {
 			        "unitId": 1,
