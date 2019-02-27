@@ -815,7 +815,32 @@ if ($err) {
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
-
+		$requestdata = '{
+				"name": "'.$value['code'].'",
+			    "itemId": '.$itemId.',
+			    "isActive": true,
+			    "model": "'.$value['id'].'",
+			    "mainWarehouseId": 104,
+			    "unit": {
+			        "unitId": 1,
+			        "content": 1
+			    },
+			    "variationAttributeValues": [
+			        {
+			        	"valueId":135,
+			             "135": [{
+			            "AttributeValueSet":[
+			        	
+			            ]
+			            }]
+			        }
+			    ],
+			    "variationClients": [
+			        {
+			            "plentyId": 42296
+			        }
+			  ]
+			}';
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -826,7 +851,7 @@ if ($err) {
 		  CURLOPT_TIMEOUT => 30,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS =>  "{\"name\": \"$value['code']\",\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"model\": \"$value['id']\",\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n    \"variationAttributeValues\": [\n        {\n        \t\"valueId\":33,\n             \"33\": [{\n            \"AttributeValueSet\":[\n        \t\n            ]\n            }]\n        }\n    ],\n    \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ]\n}",
+		  CURLOPT_POSTFIELDS =>  $requestdata,
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer ".$access_token,
 		    "cache-control: no-cache",
