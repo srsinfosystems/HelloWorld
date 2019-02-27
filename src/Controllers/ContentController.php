@@ -86,14 +86,8 @@ class ContentController extends Controller
 					if ($arrayData['items']['item']['models']['model']) {
 	      				if ($arrayData['items']['item']['models']['model']['id']) {
 	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
-	      					$variationName = $arrayData['items']['item']['models']['model']['code'];
-	      					$singleSubVariation = $this->singleModel($arrayData);
-	      					
 	      				}else{
 	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
-	      					$variationName = $arrayData['items']['item']['models']['model'][0]['code'];
-	      					$n1 = 0;
-	      					$MultiSubVariation = $this->multiModel($arrayData);
 	      				}
 
 	      			}
@@ -108,8 +102,8 @@ class ContentController extends Controller
 	       			
 	       			$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 
-	       				       			
-	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $modelId, $variationName);
+	       			
+	       			$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $arrayData['items']['item']['streetPrice'], $modelId);
 	       			$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       			$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
             		$ItemResponseArray[$i]['variation']['model'] = $activeItem['model'];
@@ -148,17 +142,6 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
-				    	if (is_array($arrayData['items']['item']['models']['model'])) {
-		       				echo "model is an array";
-		       				$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
-		       			}else{
-		       				echo "model is not an array";
-		       				foreach ($MultiSubVariation as $value) {
-		       					$this->createSubVariation($ItemResponse['id'], $value);
-		       				}
-		       				
-		       			}
-
 				    	return $ItemResponseArray;
 				    }
 		        } else{
@@ -167,10 +150,8 @@ class ContentController extends Controller
 						if ($value['models']['model']) {
 		      				if ($value['models']['model']['id']) {
 		      					$modelId = $value['models']['model']['id'];
-		      					$variationName = $value['models']['model']['code'];
 		      				}else{
 		      					$modelId = $value['models']['model'][0]['id'];
-		      					$variationName = $value['models']['model'][0]['code'];
 		      				}
 
 		      			}
@@ -187,7 +168,7 @@ class ContentController extends Controller
 	       				
 	       				$ItemResponseArray[$i]['variation']['barcode'] = $linkingBarcode['code'];
 	       				
-	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $modelId, $variationName);
+	       				$activeItem = $this->ActiveItem($ItemResponse['id'], $ItemResponse['mainVariationId'], $value['streetPrice'], $modelId);
 	       				
 	       				$ItemResponseArray[$i]['variation']['activeItem'] = $activeItem['isActive'];
 	       				$ItemResponseArray[$i]['variation']['purchasePrice'] = $activeItem['purchasePrice'];
@@ -224,16 +205,6 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
-				    	if (is_array($arrayData['items']['item']['models']['model'])) {
-		       				echo "model is an array";
-		       				$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
-		       			}else{
-		       				echo "model is not an array";
-		       				foreach ($MultiSubVariation as $value) {
-		       					$this->createSubVariation($ItemResponse['id'], $value);
-		       				}
-		       				
-		       			}
 						$i++;
 					}
 					return $ItemResponseArray; 
@@ -591,7 +562,7 @@ if ($err) {
 		}
 	}
 
-	public function ActiveItem($itemId, $variationId, $purchasePrice, $modelid, $name){
+	public function ActiveItem($itemId, $variationId, $purchasePrice, $modelid){
 		//echo $itemId." ".$variationId;exit;
 		$login = $this->login();
 		$login = json_decode($login, true);
@@ -608,7 +579,7 @@ if ($err) {
 		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
-		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$modelid\",\n    \"name\": \"$name\",\n 	 \"mainWarehouseId\": 104}", 
+		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$modelid\"\n}",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
@@ -808,98 +779,5 @@ if ($err) {
 		} else {
 		  return "Image linked with variation";
 		}
-	}
-
-	public function createSubVariation($itemId,$value){
-		$login = $this->login();
-		$login = json_decode($login, true);
-		$access_token = $login['access_token'];
-		$host = $_SERVER['HTTP_HOST'];
-
-		$requestdata = {
-				"name": "$value['code']",
-			    "itemId": $itemId,
-			    "isActive": true,
-			    "model": "$value['id']",
-			    "mainWarehouseId": 104,
-			    "unit": {
-			        "unitId": 1,
-			        "content": 1
-			    },
-			    "variationAttributeValues": [
-			        {
-			        	"valueId":135,
-			             "135": [{
-			            "AttributeValueSet":[
-			        	
-			            ]
-			            }]
-			        }
-			    ],
-			    "variationClients": [
-			        {
-			            "plentyId": 42296
-			        }
-			  ]
-			};
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 30,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS =>  $requestdata,
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer ".$access_token,
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return (json_decode($response, TRUE));
-		}
-	}
-	public function multiModel($arrayData){
-		$i=0;
-		foreach ($arrayData['items']['item']['models']['model'] as $value) {
-			$subVariation[$i]['modelid'] = $value['id'];
-			$subVariation[$i]['modelName'] = $value['code'];
-			if ($value['color']) {
-				if ($value['color'] == "Red"){
-					$subVariation[$i]['color'] = 132;
-				}
-				if ($value['color'] == "Blue") {
-					$subVariation[$i]['color'] = 33;
-				}
-			}
-			$i++;
-		}
-		return $subVariation;
-	}
-	public function singleModel($arrayData){
-		$subVariation[0]['modelid'] = $arrayData['items']['item']['models']['model']['id'];
-		$subVariation[0]['modelName'] = $arrayData['items']['item']['models']['model']['code'];
-
-		if ($arrayData['items']['item']['models']['model']['color']) {
-				if ($arrayData['items']['item']['models']['model']['color'] == "red"){
-					$subVariation[0]['color'] = 132;
-				}
-				if ($arrayData['items']['item']['models']['model']['color'] == "blue") {
-					$subVariation[0]['color'] = 33;
-				}
-			}		
-		return $subVariation;
 	}
 }
