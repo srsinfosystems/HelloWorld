@@ -818,7 +818,8 @@ if ($err) {
 		$login = json_decode($login, true);
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
-
+		echo $value['code'];exit;
+		$requestdata = array();
 		$requestdata['name'] = $value['code'];
 		$requestdata['itemId'] = $itemId;
 		$requestdata['isActive'] = true;
