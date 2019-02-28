@@ -87,13 +87,13 @@ class ContentController extends Controller
 	      				if ($arrayData['items']['item']['models']['model']['id']) {
 	      					$modelId = $arrayData['items']['item']['models']['model']['id'];
 	      					$variationName = $arrayData['items']['item']['models']['model']['code'];
-	      					$singleSubVariation = $this->singleModel($arrayData);
+	      					//$singleSubVariation = $this->singleModel($arrayData);
 	      					
 	      				}else{
 	      					$modelId = $arrayData['items']['item']['models']['model'][0]['id'];
 	      					$variationName = $arrayData['items']['item']['models']['model'][0]['code'];
-	      					$n1 = 0;
-	      					$MultiSubVariation = $this->multiModel($arrayData);
+	      					
+	      					//$MultiSubVariation = $this->multiModel($arrayData);
 	      				}
 
 	      			}
@@ -150,14 +150,14 @@ class ContentController extends Controller
 				    	}
 				    	if (is_array($arrayData['items']['item']['models']['model'])) {
 		       				echo "model is an array";
-		       				$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
+		       				//$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
 		       			}else{
 		       				echo "model is not an array";
-		       				 if($MultiSubVariation){
-		       				foreach ($MultiSubVariation as $value) {
+		       				// if($MultiSubVariation){
+		       				/*foreach ($MultiSubVariation as $value) {
 		       					$this->createSubVariation($ItemResponse['id'], $value);
-		       				}
-		       			}
+		       				}*/
+		       			//}
 		       				
 		       			}
 
@@ -226,7 +226,7 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
-				    	if ($singleSubVariation || $MultiSubVariation) {
+				    	/*if ($singleSubVariation || $MultiSubVariation) {
 				    		
 				    	if (is_array($arrayData['items']['item']['models']['model'])) {
 		       				echo "model is an array";
@@ -238,7 +238,7 @@ class ContentController extends Controller
 		       				}
 		       				
 		       			}
-		       		}
+		       		}*/
 						$i++;
 					}
 					return $ItemResponseArray; 
