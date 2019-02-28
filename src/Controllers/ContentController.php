@@ -819,14 +819,14 @@ if ($err) {
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
 
-		$requestdata->name = "$value['code']";
-		$requestdata->itemId = $itemId;
-		$requestdata->isActive = true;
-		$requestdata->model = "$value['id']";
-		$requestdata->mainWarehouseId = 104;
-		$requestdata->unit = {"unitId": 1, "content": 1};
-		$requestdata->variationAttributeValues = {"valueId":135,"135": [{ "AttributeValueSet":[] }]};
-		$requestdata->variationClients = {"plentyId": 42296};
+		$requestdata['name'] = "$value['code']";
+		$requestdata['itemId'] = $itemId;
+		$requestdata['isActive'] = true;
+		$requestdata['model'] = "$value['id']";
+		$requestdata['mainWarehouseId'] = 104;
+		$requestdata['unit'] = {"unitId": 1, "content": 1};
+		$requestdata['variationAttributeValues'] = {"valueId":135,"135": [{ "AttributeValueSet":[] }]};
+		$requestdata['variationClients'] = {"plentyId": 42296};
 		$requestdata = json_encode($requestdata);
 		/*$requestdata = {
 				"name": "$value['code']",
