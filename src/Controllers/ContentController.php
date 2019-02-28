@@ -819,7 +819,7 @@ if ($err) {
 		$access_token = $login['access_token'];
 		$host = $_SERVER['HTTP_HOST'];
 		echo $value['code'];exit;
-		$requestdata = array();
+		/*$requestdata = array();
 		$requestdata['name'] = $value['code'];
 		$requestdata['itemId'] = $itemId;
 		$requestdata['isActive'] = true;
@@ -828,7 +828,7 @@ if ($err) {
 		$requestdata['unit'] = {"unitId": 1, "content": 1};
 		$requestdata['variationAttributeValues'] = {"valueId":135,"135": [{ "AttributeValueSet":[] }]};
 		$requestdata['variationClients'] = {"plentyId": 42296};
-		$requestdata = json_encode($requestdata);
+		$requestdata = json_encode($requestdata);*/
 		/*$requestdata = {
 				"name": "$value['code']",
 			    "itemId": $itemId,
@@ -855,6 +855,34 @@ if ($err) {
 			        }
 			  ]
 			};*/
+			$requestdata = '{
+	"name": "FEND-ER_2084_YELLOW-BLUE",
+    "itemId": 1236970,
+    "isActive": true,
+    "model": "4561",
+    "mainWarehouseId": 104,
+    "unit": {
+        "unitId": 1,
+        "content": 1
+    },
+    "variationAttributeValues": [
+        {
+        	"valueId":33,
+             "33": [{
+            "AttributeValueSet":[
+        		{"valueId":133},
+        		{"valueId":134},
+        		{"valueId":135}
+            ]
+            }]
+        }
+    ],
+    "variationClients": [
+        {
+            "plentyId": 42296
+        }
+  ]
+}';
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
