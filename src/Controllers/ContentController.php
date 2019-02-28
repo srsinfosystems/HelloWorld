@@ -923,14 +923,14 @@ if ($err) {
 			$subVariation[$i]['modelid'] = $value['id'];
 			$subVariation[$i]['modelName'] = $value['code'];
 			
-			$subVariation[$i]['color'] = $value['color'];
-		}
+			echo $subVariation[$i]['color'] = $value['color']. " ===";
+		}exit;
 		return $subVariation;
 	}
 	public function singleModel($arrayData){
 		$subVariation[0]['modelid'] = $arrayData['items']['item']['models']['model']['id'];
 		$subVariation[0]['modelName'] = $arrayData['items']['item']['models']['model']['code'];
-		$subVariation[0]['color'] = $arrayData['items']['item']['models']['model']['color'];
+		echo $subVariation[0]['color'] = $arrayData['items']['item']['models']['model']['color'];exit;
 				
 		return $subVariation;
 	}
