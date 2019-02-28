@@ -153,9 +153,11 @@ class ContentController extends Controller
 		       				$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
 		       			}else{
 		       				echo "model is not an array";
+		       				 if($MultiSubVariation){
 		       				foreach ($MultiSubVariation as $value) {
 		       					$this->createSubVariation($ItemResponse['id'], $value);
 		       				}
+		       			}
 		       				
 		       			}
 
@@ -224,6 +226,8 @@ class ContentController extends Controller
 				    		$ItemResponseArray[$i]['images'][$no]['id'] = "not available";
 					        $ItemResponseArray[$i]['images'][$no]['url'] = "not available";
 				    	}
+				    	if ($singleSubVariation || $MultiSubVariation) {
+				    		
 				    	if (is_array($arrayData['items']['item']['models']['model'])) {
 		       				echo "model is an array";
 		       				$this->createSubVariation($ItemResponse['id'],$singleSubVariation);
@@ -234,6 +238,7 @@ class ContentController extends Controller
 		       				}
 		       				
 		       			}
+		       		}
 						$i++;
 					}
 					return $ItemResponseArray; 
