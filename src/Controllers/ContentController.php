@@ -918,34 +918,20 @@ if ($err) {
 		}
 	}
 	public function multiModel($arrayData){
-		$i=0;
+		
 		foreach ($arrayData['items']['item']['models']['model'] as $value) {
 			$subVariation[$i]['modelid'] = $value['id'];
 			$subVariation[$i]['modelName'] = $value['code'];
-			if ($value['color']) {
-				if ($value['color'] == "Red"){
-					$subVariation[$i]['color'] = 132;
-				}
-				if ($value['color'] == "Blue") {
-					$subVariation[$i]['color'] = 33;
-				}
-			}
-			$i++;
+			
+			$subVariation[$i]['color'] = $value['color'];
 		}
 		return $subVariation;
 	}
 	public function singleModel($arrayData){
 		$subVariation[0]['modelid'] = $arrayData['items']['item']['models']['model']['id'];
 		$subVariation[0]['modelName'] = $arrayData['items']['item']['models']['model']['code'];
-
-		if ($arrayData['items']['item']['models']['model']['color']) {
-				if ($arrayData['items']['item']['models']['model']['color'] == "red"){
-					$subVariation[0]['color'] = 132;
-				}
-				if ($arrayData['items']['item']['models']['model']['color'] == "blue") {
-					$subVariation[0]['color'] = 33;
-				}
-			}		
+		$subVariation[0]['color'] = $arrayData['items']['item']['models']['model']['color'];
+				
 		return $subVariation;
 	}
 	public function saveAttribute($attributeId, $backendName){
