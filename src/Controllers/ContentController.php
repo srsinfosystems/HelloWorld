@@ -38,7 +38,7 @@ class ContentController extends Controller
 		
 		$Items = $this->getAllItems($brand);		
 		
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
@@ -91,8 +91,7 @@ class ContentController extends Controller
 	        } 
 	      }else{
 
-	      }
-			
+	      }			
 
 		}
 	}
