@@ -75,7 +75,7 @@ class ContentController extends Controller
 	        $json = json_encode($xml);
 	        $array = json_decode($json,TRUE); 
 	      	   
-	      	   $i= 1;  	      
+	      	   $i= 0;  	      
 	      if (is_array($array['items']['item'])) {
 	        foreach ($array['items']['item'] as $items) {
 	          
@@ -94,14 +94,13 @@ class ContentController extends Controller
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 	             $i++;
 	             
-	            exit;
+	           
 	        }
-	        echo "Total item inserted: ".$i;
-	        echo "<br>Please use browser's back button to go back on brand selection page";
-	      }else{
+	       
+	      }		
 
-	      }			
-
+	       echo "Total item inserted: ".$i;
+	       echo "<br>Please use browser's back button to go back on brand selection page";
 		}
 	}
 	public function login(){
