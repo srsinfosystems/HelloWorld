@@ -38,11 +38,11 @@ class ContentController extends Controller
 		
 		$flag = $this->getAllItems($brand);		
 		
-		if ($flag == 1) 
+		/*if ($flag == 1) 
 			$data = "Items created successfully.";
 		else
-			$data = "Somthing went wrong.";
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
+			$data = "Somthing went wrong.";*/
+		return $twig->render('HelloWorld::content.importProduct');
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
@@ -74,7 +74,8 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 	        $json = json_encode($xml);
 	        $array = json_decode($json,TRUE); 
-	      	   $flag = 0;   	      
+	      	   
+	      	   $i= 1;  	      
 	      if (is_array($array['items']['item'])) {
 	        foreach ($array['items']['item'] as $items) {
 	          
@@ -91,11 +92,12 @@ class ContentController extends Controller
 	             $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
 	             $this->uploadImages($items);
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
-	             $flag = 1;
+	             $i++;
+	             
 	             exit;
 	        }
-	        return $flag;
-
+	        echo "Total item inserted: ".$i;
+	        echo "<br>Please use browser's back button to go back on brand selection page";
 	      }else{
 
 	      }			
@@ -346,7 +348,7 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  //echo $response;
 		}
   	}
   	public function linkingBarcode($ItemId, $variationId, $code){
@@ -856,7 +858,7 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		 // echo $response;
 		}
   	}
 	public function activateSubVariation($itemId, $variationId){
