@@ -36,9 +36,13 @@ class ContentController extends Controller
 		
 		 $brand = $_GET['brand'];		
 		
-		$Items = $this->getAllItems($brand);		
+		$flag = $this->getAllItems($brand);		
 		
-		return $twig->render('HelloWorld::content.importProduct',array('data' => $Items));
+		if ($flag == 1) 
+			$data = "Items created successfully.";
+		else
+			$data = "Somthing went wrong.";
+		return $twig->render('HelloWorld::content.importProduct',array('data' => $data));
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
@@ -70,7 +74,7 @@ class ContentController extends Controller
 			$xml = simplexml_load_string($response); 
 	        $json = json_encode($xml);
 	        $array = json_decode($json,TRUE); 
-	      	      	      
+	      	   $flag = 0;   	      
 	      if (is_array($array['items']['item'])) {
 	        foreach ($array['items']['item'] as $items) {
 	          
@@ -87,8 +91,11 @@ class ContentController extends Controller
 	             $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
 	             $this->uploadImages($items);
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
-	             
-	        } 
+	             $flag = 1;
+	             exit;
+	        }
+	        return $flag;
+
 	      }else{
 
 	      }			
