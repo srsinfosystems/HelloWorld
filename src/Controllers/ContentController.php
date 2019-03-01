@@ -142,7 +142,7 @@ class ContentController extends Controller
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 30,
+      CURLOPT_TIMEOUT => 90000000,
       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
       CURLOPT_CUSTOMREQUEST => "POST",
       CURLOPT_POSTFIELDS => "{\n\t\"id\":$itemId,\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
@@ -151,8 +151,7 @@ class ContentController extends Controller
         "authorization: Bearer $access_token",
         "cache-control: no-cache",
         "content-type: application/json"
-      ),
-      CURLOPT_TIMEOUT=> 90000000
+      )
     ));
 
     $response = curl_exec($curl);
@@ -190,8 +189,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "postman-token: aff4e99b-1b4f-d79b-6c95-baf82b111e3b"
+		    "cache-control: no-cache"
 		  ),
 		));
 
@@ -544,7 +542,12 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
-	      // echo  $response;
+	      $response = json_decode($response, TRUE);
+		  $vid =  $response['id'];
+		  if(!empty($id)) {
+		  	$this->activateSubVariation($itemId, $vid);
+			$this->bookIncomingStock($itemId, $vid, $items, $model);
+		  }
 	    }
 	  }
 
@@ -729,7 +732,7 @@ class ContentController extends Controller
 	      }
 	    }
 	    if (empty($catName)) return;
-	    $catId =  $this->searchCategory($catName);
+	    	$catId =  $this->searchCategory($catName);
 	    if(empty($catId)) {
 			// Create category
 			$catId = $this->createCategory($catName);
@@ -808,6 +811,79 @@ class ContentController extends Controller
 			return $response[0]['id'];
 			else
 			return "";
+		}
+	}
+	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
+		    $login = $this->login();
+		    $login = json_decode($login, true);
+		    $access_token = $login['access_token'];
+		    $host = $_SERVER['HTTP_HOST'];
+
+			$curl = curl_init();
+			$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
+			$currency = $items['currency'];
+			$purchasePrice = "0.00";
+			$qty = $model['availability'];
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_POSTFIELDS => "{\n    \"warehouseId\": 104,\n    \"deliveredAt\": \"$dt\",\n    \"currency\": \"$currency\",\n    \"quantity\": $qty,\n    \"purchasePrice\":$purchasePrice,\n    \"reasonId\": 101\n\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json",
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  echo $response;
+		}
+  	}
+	public function activateSubVariation($itemId, $variationId){
+		$login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId,
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true\n   \n    \n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  // echo $response;
 		}
 	}
 	
