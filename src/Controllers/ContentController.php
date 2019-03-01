@@ -87,7 +87,7 @@ class ContentController extends Controller
 	             $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
 	             $this->uploadImages($items);
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
-	             exit;
+	             
 	        } 
 	      }else{
 
