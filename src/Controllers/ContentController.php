@@ -94,7 +94,7 @@ class ContentController extends Controller
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 	             $i++;
 	             
-	            
+	            exit;
 	        }
 	        echo "Total item inserted: ".$i;
 	        echo "<br>Please use browser's back button to go back on brand selection page";
