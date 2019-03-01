@@ -37,12 +37,12 @@ class ContentController extends Controller
 		 $brand = $_GET['brand'];		
 		
 		$flag = $this->getAllItems($brand);		
-		
+		exit;
 		/*if ($flag == 1) 
 			$data = "Items created successfully.";
 		else
 			$data = "Somthing went wrong.";*/
-		return $twig->render('HelloWorld::content.importProduct');
+		//return $twig->render('HelloWorld::content.importProduct');
 	}
 	public function getAllItems($brand){
 		$curl = curl_init();
@@ -94,7 +94,7 @@ class ContentController extends Controller
 	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 	             $i++;
 	             
-	             exit;
+	            
 	        }
 	        echo "Total item inserted: ".$i;
 	        echo "<br>Please use browser's back button to go back on brand selection page";
