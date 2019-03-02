@@ -211,7 +211,7 @@ class ContentController extends Controller
 	    if ($err) {
 	      echo "cURL Error #:" . $err;
 	    } else {
-	      echo $response;
+	      //echo $response;
 	      $response =(json_decode($response,true));
 	      $variationId = $response['mainVariationId'];
 	      if(empty($variationId)) return;
@@ -585,7 +585,7 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
-	      echo  $response;
+	      //echo  $response;
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
 		  if(!empty($id)) {
@@ -857,7 +857,7 @@ class ContentController extends Controller
 		    $host = $_SERVER['HTTP_HOST'];
 
 			$curl = curl_init();
-			$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
+			$dt = date("Y-m-d")."T".date("G:i:s")."+00:00";
 			$currency = $items['currency'];
 			$purchasePrice = "0.00";
 			$qty = $model['availability'];
