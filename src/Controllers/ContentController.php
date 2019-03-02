@@ -81,6 +81,7 @@ class ContentController extends Controller
 
 	            $arritem = $this->createItem($items);
 	             // echo json_encode($arritem);
+	            
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
