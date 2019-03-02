@@ -34,7 +34,7 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		 $brand = $_GET['brand'];		
+		$brand = $_GET['brand'];		
 		
 		$flag = $this->getAllItems($brand);		
 		exit;
@@ -78,23 +78,27 @@ class ContentController extends Controller
 	      	   $i= 0;  	      
 	      if (is_array($array['items']['item'])) {
 	        foreach ($array['items']['item'] as $items) {
-	          
-	             $arritem = $this->createItem($items);
-	             // print_r($arritem);
-	             if(empty($arritem['variationId'])) continue;
-	             // Activate item
-	              $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
 
-	             if($status == false) continue;
-	             $salesPrice = $this->salesPrice($arritem['variationId'],$items);
-	             $barcode = $this->linkingBarcode($arritem['itemId'], $arritem['variationId'], rand(10,1000000));
+	            $arritem = $this->createItem($items);
+	            // print_r($arritem);
+	            if(empty($arritem['variationId'])) continue;
+	            // Activate item
+	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
 
-	             $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
-	             $this->uploadImages($items);
-	             $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
-	             $i++;
-	             
-	           
+	            if($status == false) continue;
+	            $salesPrice = $this->salesPrice($arritem['variationId'],$items);
+	            $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
+	            $barCode = rand(10,1000000);
+	            if(!empty($model['barcode'])) {
+					$barCode = $model['barcode'];
+				}
+	            $barcode = $this->linkingBarcode($arritem['itemId'], $arritem['variationId'], $barCode);
+
+	            $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
+	            $this->uploadImages($items);
+	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
+
+	            exit;
 	        }
 	       
 	      }		
@@ -103,254 +107,8 @@ class ContentController extends Controller
 	       echo "<br>Please use browser's back button to go back on brand selection page";
 		}
 	}
-	public function login(){
-		$host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/login",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "username=API-USER&password=%5BnWu%3Bx%3E8Eny%3BbSs%40",
-		  CURLOPT_HTTPHEADER => array(
-		    "cache-control: no-cache",
-		    "content-type: application/x-www-form-urlencoded",
-		    "postman-token: 49a8d541-073c-8569-b3c3-76319f67e552"
-		  )
-		));
 
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  return "cURL Error #:" . $err;
-		} else {
-		  return $response;
-		}
-	}
-	public function createItem($items){
-    $login = $this->login();
-    $login = json_decode($login, true);
-    $access_token = $login['access_token'];
-    $host = $_SERVER['HTTP_HOST'];
-
-    $curl = curl_init();
-    if(empty($items)) return "";
-    $title = $items['name'];
-    $itemId = $items['id'];
-    $manufacturerId = $this->getManufacturer($items);
-    $catId = $this->getCategory($items);
-    curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://".$host."/rest/items",
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => "",
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 90000000,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "POST",
-      CURLOPT_POSTFIELDS => "{\n\t\"id\":$itemId,\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
-      CURLOPT_HTTPHEADER => array(
-        "accept: application/json",
-        "authorization: Bearer $access_token",
-        "cache-control: no-cache",
-        "content-type: application/json"
-      )
-    ));
-
-    $response = curl_exec($curl);
-    $err = curl_error($curl);
-    curl_close($curl);
-
-    if ($err) {
-      echo "cURL Error #:" . $err;
-    } else {
-      $response =(json_decode($response,true));
-      $variationId = $response['mainVariationId'];
-      if(empty($variationId)) return;
-      // Activate the item and return to main function
-
-      return array('itemId' => $itemId, 'variationId' => $variationId);
-    }
-  }
-  	public function getManufacturer($items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
-		$curl = curl_init();
-		$brand = $items['brand'];
-		if(empty($brand))return;
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers?name=".$brand,
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 90000000,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "GET",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache"
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  $result = json_decode($response, TRUE);
-		  if(isset($result['entries'][0]['id'])){
-		    return $result['entries'][0]['id'];
-		  }else{
-		    return $this->creatManufacturer($brand);
-		  }
-		}
-  	}
-  	public function creatManufacturer($brand){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-		$curl = curl_init();
-
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 90000000,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\n\t\"name\": \"$brand\"\n}",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  $response = json_decode($response,TRUE);
-		  if(!empty($response)){
-			    return $response['id'];
-			}
-		}
-	}
-	public function ActiveItem($itemId, $variationId, $items ){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
-	    $curl = curl_init();
-	    $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
-	    
-	    //print_r($model);
-
-	    $suggestedPrice = $items['suggestedPrice'];
-	    $id = $model['barcode'];
-	    $code = $model['code'];
-	    $availability = $items['availability'];
-	    $streetPrice = $items['streetPrice'];
-	    $model = $model['model']; 
-	    # get id of color
-	    $purchasePrice = 0;
-	    $avgPrice = 0;
-	    $salePrice = $streetPrice;
-	    if(!empty($suggestedPrice)){
-	      $salePrice = $suggestedPrice;
-	    }    
-	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."",
-	      CURLOPT_RETURNTRANSFER => true,
-	      CURLOPT_ENCODING => "",
-	      CURLOPT_MAXREDIRS => 10,
-	      CURLOPT_TIMEOUT => 90000000,
-	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	      CURLOPT_CUSTOMREQUEST => "PUT",
-	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104\n}",
-	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
-	        "cache-control: no-cache",
-	        "content-type: application/json"
-	      ),
-	    ));
-
-	    $response = curl_exec($curl);
-	    $err = curl_error($curl);
-
-	    curl_close($curl);
-
-	    if ($err) {
-	      echo $err;
-	      //return "cURL Error #:" . $err;
-	    } else {
-	      //echo $response;
-	      $response = json_decode($response, TRUE);
-	      $isActive = $response['isActive'];
-	      return $isActive;
-	      
-	      // return "true";
-	    }
-	    
-	}
-	public function salesPrice($variationId, $items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
-		$curl = curl_init();
-		$salePrice = $items['streetPrice'];
-	    if(!empty($items['suggestedPrice'])){
-	      $salePrice = $items['suggestedPrice'];
-	    }  
-		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/variations/variation_sales_prices",
-		  CURLOPT_RETURNTRANSFER => true,
-		  CURLOPT_ENCODING => "",
-		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 90000000,
-		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "[{\n\t\"variationId\": $variationId,\n\t\"salesPriceId\": 2,\n\t\"price\": $salePrice\n}]",
-		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
-		    "cache-control: no-cache",
-		    "content-type: application/json"
-		  ),
-		));
-
-		$response = curl_exec($curl);
-		$err = curl_error($curl);
-
-		curl_close($curl);
-
-		if ($err) {
-		  echo "cURL Error #:" . $err;
-		} else {
-		  //echo $response;
-		}
-  	}
-  	public function linkingBarcode($ItemId, $variationId, $code){
+	public function linkingBarcode($ItemId, $variationId, $code){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -363,7 +121,7 @@ class ContentController extends Controller
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
-	      CURLOPT_TIMEOUT => 90000000,
+	      CURLOPT_TIMEOUT=> 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
 	      CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
@@ -371,6 +129,38 @@ class ContentController extends Controller
 	        "authorization: Bearer $access_token",
 	        "cache-control: no-cache",
 	        "content-type: application/json"
+	      )
+	      
+	    ));
+
+	    $response = curl_exec($curl);
+	    $err = curl_error($curl);
+
+	    curl_close($curl);
+
+	    if ($err) {
+	      return "cURL Error #:" . $err;
+	    } else {
+	      return $response;
+	    }
+	}
+	public function login(){
+
+	    $host = $_SERVER['HTTP_HOST'];
+	    $curl = curl_init();
+	    curl_setopt_array($curl, array(
+	      CURLOPT_URL => "https://".$host."/rest/login",
+	      CURLOPT_RETURNTRANSFER => true,
+	      CURLOPT_ENCODING => "",
+	      CURLOPT_MAXREDIRS => 10,
+	      CURLOPT_TIMEOUT => 90000000,
+	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	      CURLOPT_CUSTOMREQUEST => "POST",
+	      CURLOPT_POSTFIELDS => "username=API-USER&password=%5BnWu%3Bx%3E8Eny%3BbSs%40",
+	      CURLOPT_HTTPHEADER => array(
+	        "cache-control: no-cache",
+	        "content-type: application/x-www-form-urlencoded",
+	        "postman-token: 49a8d541-073c-8569-b3c3-76319f67e552"
 	      )
 	    ));
 
@@ -385,60 +175,73 @@ class ContentController extends Controller
 	      return $response;
 	    }
 	}
-	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
+	public function createItem($items){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
 	    $host = $_SERVER['HTTP_HOST'];
 
 	    $curl = curl_init();
-
+	    if(empty($items)) return "";
+	    $title = $items['name'];
+	    $itemId = $items['id'];
+	    $manufacturerId = $this->getManufacturer($items);
+	    $catId = $this->getCategory($items);
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
+	      CURLOPT_URL => "https://".$host."/rest/items",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
-	      CURLOPT_TIMEOUT => 900000000,
+	      CURLOPT_TIMEOUT => 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
-	      CURLOPT_POSTFIELDS => "{\"itemId\": $itemId,\"lang\": \"en\",\"name\": \"$ItemName\",\"description\": \"$discription\"}",
+	      CURLOPT_POSTFIELDS => "{\n\t\"id\":$itemId,\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer ".$access_token,
+	        "accept: application/json",
+	        "authorization: Bearer $access_token",
 	        "cache-control: no-cache",
 	        "content-type: application/json"
-	      ),
+	      )
 	    ));
 
 	    $response = curl_exec($curl);
 	    $err = curl_error($curl);
-
 	    curl_close($curl);
 
 	    if ($err) {
-	      return "cURL Error #:" . $err;
+	      echo "cURL Error #:" . $err;
 	    } else {
-	      return $response;
+	      echo $response;
+	      $response =(json_decode($response,true));
+	      $variationId = $response['mainVariationId'];
+	      if(empty($variationId)) return;
+	      // Activate the item and return to main function
+
+	      return array('itemId' => $itemId, 'variationId' => $variationId);
 	    }
-  	}
-  	public function uploadImages($items){
+	}
+
+	public function uploadImages($items){
 	    $itemId = $items['id'];
 	    $images = array();
 	    if(isset($items['pictures']['image']['id'])) {
 	      $images[] = $items['pictures']['image'];
 	    }
 	    else {
-	      for($i=0; $i<count($items['pictures']['image']); $i++){
+	      for($i=0; $i<count($items['pictures']['image']); $i++) {
 
-		      $images[] = $items['pictures']['image'][$i];
-		    }
+	      $images[] = $items['pictures']['image'][$i];
+	    }
 
 	    }
 
 	    foreach($images as $image) {
 	        $img = $this->uploadImage($itemId, $image['url'], $image['id']);
+
 	    }
 	}
-   public function uploadImage($ItemId, $image, $imagevalue){
+
+	public function uploadImage($ItemId, $image, $imagevalue){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -483,8 +286,239 @@ class ContentController extends Controller
 	    } else {
 	      return $response;
 	    }
-  	}
-  	public function createSubVariation($itemId, $variationId, $items){
+	}
+
+	public function ActiveItem($itemId, $variationId, $items ){
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+	    $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
+
+	    //print_r($model);
+
+	    $suggestedPrice = $items['suggestedPrice'];
+	    $id = $model['id'];
+	    $code = $model['code'];
+	    $availability = $items['availability'];
+	    $streetPrice = $items['streetPrice'];
+	    $model = $model['model'];
+	    # get id of color
+	    $purchasePrice = 0;
+	    $avgPrice = 0;
+	    $salePrice = $streetPrice;
+	    if(!empty($suggestedPrice)){
+	      $salePrice = $suggestedPrice;
+	    }
+	    $name_id = $this->searchAttributeName('Colour');
+	    $colorValue = $this->searchAttributeValue($name_id,$model['color']);
+	    $size_id = $this->searchAttributeName('Size');
+	    $sizeValue = $this->searchAttributeValue($size_id,$model['size']);
+	    curl_setopt_array($curl, array(
+	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."",
+	      CURLOPT_RETURNTRANSFER => true,
+	      CURLOPT_ENCODING => "",
+	      CURLOPT_MAXREDIRS => 10,
+	      CURLOPT_TIMEOUT => 90000000,
+	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	      CURLOPT_CUSTOMREQUEST => "PUT",
+	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ]}",
+	      CURLOPT_HTTPHEADER => array(
+	        "authorization: Bearer $access_token",
+	        "cache-control: no-cache",
+	        "content-type: application/json"
+	      ),
+	    ));
+
+	    $response = curl_exec($curl);
+	    $err = curl_error($curl);
+
+	    curl_close($curl);
+
+	    if ($err) {
+	      echo $err;
+	      //return "cURL Error #:" . $err;
+	    } else {
+	      // echo $response;
+	      $response = json_decode($response, TRUE);
+	      $isActive = $response['isActive'];
+	      return $isActive;
+
+	      // return "true";
+	    }
+
+	  }
+
+	public function searchAttributeName($name) {
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+
+	    curl_setopt_array($curl, array(
+	      CURLOPT_URL => "https://".$host."/rest/items/attributes",
+	      CURLOPT_RETURNTRANSFER => true,
+	      CURLOPT_ENCODING => "",
+	      CURLOPT_MAXREDIRS => 10,
+	      CURLOPT_TIMEOUT => 90000000,
+	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	      CURLOPT_CUSTOMREQUEST => "GET",
+	      CURLOPT_HTTPHEADER => array(
+	        "authorization: Bearer $access_token",
+	        "cache-control: no-cache",
+	      ),
+	    ));
+
+	    $response = curl_exec($curl);
+	    $err = curl_error($curl);
+
+	    curl_close($curl);
+
+	    if ($err) {
+	      return "cURL Error #:" . $err;
+	    } else {
+	      $response = json_decode($response, TRUE);
+	      $entries = $response['entries'];
+	      foreach ($entries as $entry) {
+	        if($entry['backendName'] == $name) {
+	            return $entry['id'];
+	            break;
+	        }
+	        }
+	        return '';
+	    }
+	}
+
+	public function searchAttributeValue($id,$value) {
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+
+	    curl_setopt_array($curl, array(
+	      CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
+	      CURLOPT_RETURNTRANSFER => true,
+	      CURLOPT_ENCODING => "",
+	      CURLOPT_MAXREDIRS => 10,
+	      CURLOPT_TIMEOUT => 90000000,
+	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	      CURLOPT_CUSTOMREQUEST => "GET",
+	      CURLOPT_HTTPHEADER => array(
+	        "authorization: Bearer $access_token",
+	        "cache-control: no-cache",
+	      ),
+	    ));
+
+	    $response = curl_exec($curl);
+	    $err = curl_error($curl);
+
+	    curl_close($curl);
+
+	    if ($err) {
+	      return "cURL Error #:" . $err;
+	    } else {
+	      $response = json_decode($response, TRUE);
+	      $entries = $response['entries'];
+	      //print_r($entries); exit;
+	      foreach ($entries as $entry) {
+	        if($entry['backendName'] == "$value") {
+	            return $entry['id'];
+	            break;
+	        }
+	        }
+	        // No match create attribute value
+	        $valId = $this->createAttributeValue($id, $value);
+	        return $valId;
+	    }
+	}
+
+	public function createAttributeValue($id,$value) {
+
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "{\n    \"attributeId\": $id,\n    \"backendName\": \"$value\"\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json",
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  $response = json_decode($response, TRUE);
+		  $value_id =  $response['id'];
+		  // set name of value
+		  $this->setValueName($value_id, 'en', $value);
+		  $this->setValueName($value_id, 'de', $value);
+		  return $value_id;
+		}
+	}
+
+	public function setValueName($valueId, $lang, $name) {
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/attribute_values/".$valueId."/names",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "{\n    \"valueId\": $valueId,\n    \"lang\": \"$lang\",\n    \"name\": \"$name\"\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json",
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo $err;
+		} else {
+		  $response = json_decode($response, TRUE);
+		  return $value_id =  $response['valueId'];
+		  // set name of value
+		}
+	}
+
+	public function createSubVariation($itemId, $variationId, $items){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -492,10 +526,11 @@ class ContentController extends Controller
 
 	    $models = array();
 	    if(isset($items['models']['model']['availability'])) {
+	      return;
 	      $models[] = $items['models']['model'];
 	    }
 	    else {
-	      for($i=0; $i<count($items['models']['model']); $i++) {
+	      for($i=1; $i<count($items['models']['model']); $i++) {
 
 	      $models[] = $items['models']['model'][$i];
 	      }
@@ -533,7 +568,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 900000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
-	      CURLOPT_POSTFIELDS => "{\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"name\": \"$code\",\n    \"model\": \"$modelValue\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n \"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n   \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ],\n  \"variationBarcodes\": [{\n  \t\t\"barcodeId\":3,\n  \t\t\"code\": \"$barcode\"\n  \t}]\n}",
+	      CURLOPT_POSTFIELDS => "{\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"name\": \"$code\",\n    \"model\": \"$modelValue\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n \"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n   \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ],\n  \"variationBarcodes\": [{\n  \t\t\"barcodeId\":3,\n  \t\t\"code\": \"$barcode\"\n  \t}],\n  \"variationSalesPrices\":[{\n  \"salesPriceId\": 2,\n  \"price\": $salePrice\n  }]\n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "authorization: Bearer ".$access_token,
 	        "cache-control: no-cache",
@@ -550,6 +585,7 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
+	      echo  $response;
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
 		  if(!empty($id)) {
@@ -558,9 +594,9 @@ class ContentController extends Controller
 		  }
 	    }
 	  }
+	}
 
-  	}
-  	public function searchAttributeName($name) {
+	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -569,16 +605,18 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/attributes",
+	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
 	      CURLOPT_TIMEOUT => 900000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	      CURLOPT_CUSTOMREQUEST => "GET",
+	      CURLOPT_CUSTOMREQUEST => "POST",
+	      CURLOPT_POSTFIELDS => "{\"itemId\": $itemId,\"lang\": \"en\",\"name\": \"$ItemName\",\"description\": \"$discription\"}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$access_token,
 	        "cache-control: no-cache",
+	        "content-type: application/json"
 	      ),
 	    ));
 
@@ -590,85 +628,34 @@ class ContentController extends Controller
 	    if ($err) {
 	      return "cURL Error #:" . $err;
 	    } else {
-	      	$response = json_decode($response, TRUE);
-	      	$entries = $response['entries'];
-	      	foreach ($entries as $entry) {
-		        if($entry['backendName'] == $name) {
-		            return $entry['id'];
-		            break;
-		        }
-	        }
-	        return '';
-	    }      
-  	}
-
-  	public function searchAttributeValue($id,$value) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
-    	$curl = curl_init();
-
-	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
-	      CURLOPT_RETURNTRANSFER => true,
-	      CURLOPT_ENCODING => "",
-	      CURLOPT_MAXREDIRS => 10,
-	      CURLOPT_TIMEOUT => 900000000,
-	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	      CURLOPT_CUSTOMREQUEST => "GET",
-	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
-	        "cache-control: no-cache",
-	      ),
-	    ));
-
-	    $response = curl_exec($curl);
-	    $err = curl_error($curl);
-
-	    curl_close($curl);
-
-	    if ($err) {
-	      return "cURL Error #:" . $err;
-	    } else {
-	      $response = json_decode($response, TRUE);
-	      $entries = $response['entries'];
-	      //print_r($entries); exit;
-	      foreach ($entries as $entry) {
-	        if($entry['backendName'] == "$value") {
-	            return $entry['id'];
-	            break;
-	        }
-	        }
-	        // No match create attribute value
-	        $valId = $this->createAttributeValue($id, $value);
-	        return $valId;
-
+	      return $response;
 	    }
 	}
-	public function createAttributeValue($id,$value) {
 
+	public function salesPrice($variationId, $items){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
 	    $host = $_SERVER['HTTP_HOST'];
 
 	    $curl = curl_init();
-
+		$salePrice = $items['streetPrice'];
+		    if(!empty($items['suggestedPrice'])){
+		      $salePrice = $items['suggestedPrice'];
+		    }
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
+		  CURLOPT_URL => "https://".$host."/rest/items/variations/variation_sales_prices",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_TIMEOUT => 90000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\n    \"attributeId\": $id,\n    \"backendName\": \"$value\"\n}",
+		  CURLOPT_POSTFIELDS => "[{\n\t\"variationId\": $variationId,\n\t\"salesPriceId\": 2,\n\t\"price\": $salePrice\n}]",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
-		    "content-type: application/json",
+		    "content-type: application/json"
 		  ),
 		));
 
@@ -680,35 +667,32 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  $response = json_decode($response, TRUE);
-		  $value_id =  $response['id'];
-		  // set name of value
-		  $this->setValueName($value_id, 'en', $value);
-		  $this->setValueName($value_id, 'de', $value);
-		  return $value_id;
+		  echo $response;
 		}
 	}
-	public function setValueName($valueId, $lang, $name) {
+
+	public function getManufacturer($items){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
 	    $host = $_SERVER['HTTP_HOST'];
 
-	    $curl = curl_init();
+		$curl = curl_init();
+		$brand = $items['brand'];
+		if(empty($brand))return;
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/attribute_values/".$valueId."/names",
+		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers?name=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_TIMEOUT => 90000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		  CURLOPT_CUSTOMREQUEST => "POST",
-		  CURLOPT_POSTFIELDS => "{\n    \"valueId\": $valueId,\n    \"lang\": \"$lang\",\n    \"name\": \"$name\"\n}",
+		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer $access_token",
 		    "cache-control: no-cache",
-		    "content-type: application/json",
+		    "postman-token: aff4e99b-1b4f-d79b-6c95-baf82b111e3b"
 		  ),
 		));
 
@@ -718,13 +702,55 @@ class ContentController extends Controller
 		curl_close($curl);
 
 		if ($err) {
-		  echo $err;
+		  echo "cURL Error #:" . $err;
 		} else {
-		  $response = json_decode($response, TRUE);
-		  return $value_id =  $response['valueId'];
-		  // set name of value
+		  $result = json_decode($response, TRUE);
+		  if(isset($result['entries'][0]['id'])){
+		    return $result['entries'][0]['id'];
+		  }else{
+		    return creatManufacturer($brand);
+		  }
 		}
 	}
+
+	public function creatManufacturer($brand){
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "{\n\t\"name\": \"$brand\"\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  $response = json_decode($response,TRUE);
+		  if(!empty($response)){
+		    return $response['id'];
+		  }
+		}
+	}
+
 	public function getCategory($items){
 	    $tags = array();
 	    if(isset($items['tags']['tag'][0]['id']))
@@ -740,14 +766,15 @@ class ContentController extends Controller
 	      }
 	    }
 	    if (empty($catName)) return;
-	    	$catId =  $this->searchCategory($catName);
+	    $catId =  $this->searchCategory($catName);
 	    if(empty($catId)) {
 			// Create category
 			$catId = $this->createCategory($catName);
 		}
 		return $catId;
-  	}
-  	public function searchCategory($catName){
+	}
+
+	public function searchCategory($catName){
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -760,7 +787,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_TIMEOUT => 900000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
@@ -781,8 +808,9 @@ class ContentController extends Controller
 		  if(empty($response['entries'])) return "";
 		  return $response['entries'][0]['id'];
 		}
-  	}
-  	public function createCategory($name) {
+	}
+
+	public function createCategory($name) {
 	    $login = $this->login();
 	    $login = json_decode($login, true);
 	    $access_token = $login['access_token'];
@@ -795,7 +823,7 @@ class ContentController extends Controller
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_TIMEOUT => 9000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "[\n        {\n            \"parentCategoryId\": null,\n            \"type\": \"item\",\n            \"right\": \"all\",\n            \"details\": [\n                {\n                    \"plentyId\": 42296,\n                    \"lang\": \"en\",\n                    \"name\": \"$name\"\n                }\n            ],\n            \"clients\": [\n                {\n                    \"plentyId\": 42296\n                }\n            ]\n        }\n    ]",
@@ -821,24 +849,25 @@ class ContentController extends Controller
 			return "";
 		}
 	}
-	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
-		    $login = $this->login();
-		    $login = json_decode($login, true);
-		    $access_token = $login['access_token'];
-		    $host = $_SERVER['HTTP_HOST'];
 
-			$curl = curl_init();
-			$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
-			$currency = $items['currency'];
-			$purchasePrice = "0.00";
-			$qty = $model['availability'];
+	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+		$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
+		$currency = $items['currency'];
+		$purchasePrice = "0.00";
+		$qty = $model['availability'];
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => "https://".$host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 900000000,
+		  CURLOPT_TIMEOUT => 90000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_POSTFIELDS => "{\n    \"warehouseId\": 104,\n    \"deliveredAt\": \"$dt\",\n    \"currency\": \"$currency\",\n    \"quantity\": $qty,\n    \"purchasePrice\":$purchasePrice,\n    \"reasonId\": 101\n\n}",
@@ -857,9 +886,10 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		 // echo $response;
+		  echo $response;
 		}
-  	}
+	}
+
 	public function activateSubVariation($itemId, $variationId){
 		$login = $this->login();
 	    $login = json_decode($login, true);
@@ -894,6 +924,4 @@ class ContentController extends Controller
 		  // echo $response;
 		}
 	}
-	
 }
-
