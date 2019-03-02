@@ -34,11 +34,14 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		echo $brand = $_POST['brand'];		exit;
+		$brand = $_GET['brand'];		
 		
 		$flag = $this->getAllItems($brand);		
 		exit;
-		
+		/*if ($flag == 1) 
+			$data = "Items created successfully.";
+		else
+			$data = "Somthing went wrong.";*/
 		//return $twig->render('HelloWorld::content.importProduct');
 	}
 	public function getAllItems($brand){
