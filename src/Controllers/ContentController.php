@@ -851,23 +851,23 @@ class ContentController extends Controller
 	}
 
 	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
+		    $login = $this->login();
+		    $login = json_decode($login, true);
+		    $access_token = $login['access_token'];
+		    $host = $_SERVER['HTTP_HOST'];
 
-		$curl = curl_init();
-		$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
-		$currency = $items['currency'];
-		$purchasePrice = "0.00";
-		$qty = $model['availability'];
+			$curl = curl_init();
+			$dt = date("Y-m-d")."T".date("G:i:s")."+01:00";
+			$currency = $items['currency'];
+			$purchasePrice = "0.00";
+			$qty = $model['availability'];
 
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => "https://".$host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
-		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_TIMEOUT => 900000000,
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_POSTFIELDS => "{\n    \"warehouseId\": 104,\n    \"deliveredAt\": \"$dt\",\n    \"currency\": \"$currency\",\n    \"quantity\": $qty,\n    \"purchasePrice\":$purchasePrice,\n    \"reasonId\": 101\n\n}",
@@ -886,9 +886,9 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		 // echo $response;
 		}
-	}
+  	}
 
 	public function activateSubVariation($itemId, $variationId){
 		$login = $this->login();
