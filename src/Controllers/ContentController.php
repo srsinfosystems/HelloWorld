@@ -95,7 +95,7 @@ class ContentController extends Controller
 	            $barcode = $this->linkingBarcode($arritem['itemId'], $arritem['variationId'], $barCode);
 
 	            $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
-	            $this->uploadImages($items);
+	            $this->uploadImages($items, $arritem);
 	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);*/
 
 	            exit;
@@ -184,7 +184,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 	    if(empty($items)) return "";
 	    $title = $items['name'];
-	    $itemId = $items['id'];
+	    //$itemId = $items['id'];
 	    $manufacturerId = $this->getManufacturer($items);
 	    $catId = $this->getCategory($items);
 	    curl_setopt_array($curl, array(
@@ -195,7 +195,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
-	      CURLOPT_POSTFIELDS => "{\n\t\"id\":$itemId,\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
+	      CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "accept: application/json",
 	        "authorization: Bearer $access_token",
@@ -217,12 +217,12 @@ class ContentController extends Controller
 	      if(empty($variationId)) return;
 	      // Activate the item and return to main function
 
-	      return array('itemId' => $itemId, 'variationId' => $variationId);
+	      return array('itemId' => $response['id'], 'variationId' => $variationId);
 	    }
 	}
 
-	public function uploadImages($items){
-	    $itemId = $items['id'];
+	public function uploadImages($items, $arritem){
+	    $itemId = $arritem['itemId'];
 	    $images = array();
 	    if(isset($items['pictures']['image']['id'])) {
 	      $images[] = $items['pictures']['image'];
