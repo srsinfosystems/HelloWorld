@@ -81,7 +81,7 @@ class ContentController extends Controller
 
 	            $arritem = $this->createItem($items);
 	             // echo json_encode($arritem);
-	            
+
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
@@ -99,7 +99,7 @@ class ContentController extends Controller
 	            $this->uploadImages($items, $arritem);
 	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 
-	            exit;
+	           // exit;
 	        }
 	       
 	      }		
@@ -891,7 +891,7 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		 echo $response;
+		 //echo $response;
 		}
   	}
 
