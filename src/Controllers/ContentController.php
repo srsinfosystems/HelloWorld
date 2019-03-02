@@ -585,7 +585,7 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
-	      //echo  $response;
+	      echo  $response;
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
 		  if(!empty($vid)) {
