@@ -34,7 +34,7 @@ class ContentController extends Controller
 	{
 		//echo $_REQUEST;
 		
-		$brand = $_GET['brand'];		
+		echo $brand = $_POST['brand'];		
 		
 		$flag = $this->getAllItems($brand);		
 		exit;
