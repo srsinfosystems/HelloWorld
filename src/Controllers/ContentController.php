@@ -80,13 +80,13 @@ class ContentController extends Controller
 	        foreach ($array['items']['item'] as $items) {
 
 	            $arritem = $this->createItem($items);
-	             print_r($arritem);
+	             echo json_encode($arritem);
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
 
 	            if($status == false) continue;
-	            /*$salesPrice = $this->salesPrice($arritem['variationId'],$items);
+	            $salesPrice = $this->salesPrice($arritem['variationId'],$items);
 	            $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
 	            $barCode = rand(10,1000000);
 	            if(!empty($model['barcode'])) {
@@ -96,7 +96,7 @@ class ContentController extends Controller
 
 	            $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
 	            $this->uploadImages($items, $arritem);
-	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);*/
+	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 
 	            exit;
 	        }
