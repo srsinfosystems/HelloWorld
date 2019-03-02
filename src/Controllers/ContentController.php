@@ -590,7 +590,7 @@ class ContentController extends Controller
 		  $vid =  $response['id'];
 		  if(!empty($vid)) {
 		  	$this->activateSubVariation($itemId, $vid);
-			$this->bookIncomingStock($itemId, $vid, $items, $model);
+			//$this->bookIncomingStock($itemId, $vid, $items, $model);
 		  }
 	    }
 	  }
@@ -667,7 +667,7 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  //echo $response;
 		}
 	}
 
