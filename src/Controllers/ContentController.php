@@ -312,6 +312,10 @@ class ContentController extends Controller
 	    if(!empty($suggestedPrice)){
 	      $salePrice = $suggestedPrice;
 	    }
+	    $weight = 0;
+	    if (!empty($items['weight'])) {
+	        $weight = $items['weight'];
+	    }
 	    $name_id = $this->searchAttributeName('Colour');
 	    $colorValue = $this->searchAttributeValue($name_id,$model['color']);
 	    $size_id = $this->searchAttributeName('Size');
@@ -324,7 +328,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "PUT",
-	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ]}",
+	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n    \"weightG\": $weight, \n    \"weightNetG\": $weight\n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "authorization: Bearer $access_token",
 	        "cache-control: no-cache",
@@ -745,7 +749,7 @@ class ContentController extends Controller
 		  echo "cURL Error #:" . $err;
 		} else {
 		  $response = json_decode($response,TRUE);
-		  if(!empty($response)){
+		  if(!empty($response['id'])){
 		    return $response['id'];
 		  }
 		}
