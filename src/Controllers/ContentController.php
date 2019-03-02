@@ -80,7 +80,7 @@ class ContentController extends Controller
 	        foreach ($array['items']['item'] as $items) {
 
 	            $arritem = $this->createItem($items);
-	            // print_r($arritem);
+	             print_r($arritem);
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
@@ -211,7 +211,7 @@ class ContentController extends Controller
 	    if ($err) {
 	      echo "cURL Error #:" . $err;
 	    } else {
-	      echo $response;
+	      //echo $response;
 	      $response =(json_decode($response,true));
 	      $variationId = $response['mainVariationId'];
 	      if(empty($variationId)) return;
