@@ -38,10 +38,7 @@ class ContentController extends Controller
 		
 		$flag = $this->getAllItems($brand);		
 		exit;
-		/*if ($flag == 1) 
-			$data = "Items created successfully.";
-		else
-			$data = "Somthing went wrong.";*/
+		
 		//return $twig->render('HelloWorld::content.importProduct');
 	}
 	public function getAllItems($brand){
