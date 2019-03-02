@@ -341,7 +341,7 @@ class ContentController extends Controller
 	      echo $err;
 	      //return "cURL Error #:" . $err;
 	    } else {
-	      echo $response;
+	      // echo $response;
 	      $response = json_decode($response, TRUE);
 	      $isActive = $response['isActive'];
 	      return $isActive;
@@ -590,7 +590,7 @@ class ContentController extends Controller
 		  $vid =  $response['id'];
 		  if(!empty($vid)) {
 		  	$this->activateSubVariation($itemId, $vid);
-			//$this->bookIncomingStock($itemId, $vid, $items, $model);
+			$this->bookIncomingStock($itemId, $vid, $items, $model);
 		  }
 	    }
 	  }
