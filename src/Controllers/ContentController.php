@@ -588,7 +588,7 @@ class ContentController extends Controller
 	      //echo  $response;
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
-		  if(!empty($id)) {
+		  if(!empty($vid)) {
 		  	$this->activateSubVariation($itemId, $vid);
 			$this->bookIncomingStock($itemId, $vid, $items, $model);
 		  }
@@ -857,7 +857,7 @@ class ContentController extends Controller
 		    $host = $_SERVER['HTTP_HOST'];
 
 			$curl = curl_init();
-			$dt = "2019-03-01"."T".date("G:i:s")."-00:00";//date("Y-m-d")."T".date("G:i:s")."-00:00";
+			echo $dt = date('c', time());
 			$currency = $items['currency'];
 			$purchasePrice = "0.00";
 			$qty = $model['availability'];
