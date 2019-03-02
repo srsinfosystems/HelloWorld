@@ -708,7 +708,7 @@ class ContentController extends Controller
 		  if(isset($result['entries'][0]['id'])){
 		    return $result['entries'][0]['id'];
 		  }else{
-		    return creatManufacturer($brand);
+		    return $this->creatManufacturer($brand);
 		  }
 		}
 	}
