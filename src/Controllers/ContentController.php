@@ -341,7 +341,7 @@ class ContentController extends Controller
 	      echo $err;
 	      //return "cURL Error #:" . $err;
 	    } else {
-	      echo $response;
+	      //echo $response;
 	      $response = json_decode($response, TRUE);
 	      $isActive = $response['isActive'];
 	      return $isActive;
