@@ -80,7 +80,7 @@ class ContentController extends Controller
 	        foreach ($array['items']['item'] as $items) {
 
 	            $arritem = $this->createItem($items);
-	             echo json_encode($arritem);
+	             // echo json_encode($arritem);
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
@@ -314,7 +314,7 @@ class ContentController extends Controller
 	    }
 	    $weight = 0;
 	    if (!empty($items['weight'])) {
-	        $weight = $items['weight'];
+	        $weight = $items['weight'] * 1000;
 	    }
 	    $name_id = $this->searchAttributeName('Colour');
 	    $colorValue = $this->searchAttributeValue($name_id,$model['color']);
