@@ -100,7 +100,7 @@ class ContentController extends Controller
 	             $status = $this->ActiveItem($arritem['itemId'], $arritem['variationId'], $items );
 
 	            if($status == false) continue;
-	            /*$salesPrice = $this->salesPrice($arritem['variationId'],$items);*/
+	            $salesPrice = $this->salesPrice($arritem['variationId'],$items);
 	            $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
 	            $barCode = rand(10,1000000);
 	            if(!empty($model['barcode'])) {
@@ -170,8 +170,7 @@ class ContentController extends Controller
 	      CURLOPT_POSTFIELDS => "username=API-USER&password=%5BnWu%3Bx%3E8Eny%3BbSs%40",
 	      CURLOPT_HTTPHEADER => array(
 	        "cache-control: no-cache",
-	        "content-type: application/x-www-form-urlencoded",
-	        "postman-token: 49a8d541-073c-8569-b3c3-76319f67e552"
+	        "content-type: application/x-www-form-urlencoded"
 	      )
 	    ));
 
@@ -306,7 +305,7 @@ class ContentController extends Controller
 	    $streetPrice = $items['streetPrice'];
 	    $model = $model['model'];
 	    # get id of color
-	    $purchasePrice = $streetPrice;
+	    $purchasePrice = 0;
 	    $avgPrice = 0;
 	    
 	    $weight = 0;
@@ -527,8 +526,12 @@ class ContentController extends Controller
 	    $modelValue = $model['model'];
 	    $barcode = $model['barcode'];
 	    # get id of color
-	    $purchasePrice = $streetPrice;
+	    $purchasePrice = 0;
 	    $avgPrice = 0;
+	    $salePriceRRP = $streetPrice;
+	    $salePrice = 0;
+	    if(!empty($suggestedPrice))
+	      $salePrice = $suggestedPrice;
 	    
 	    $name_id = $this->searchAttributeName('Colour');
 	    $colorValue = $this->searchAttributeValue($name_id,$model['color']);
@@ -545,7 +548,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 900000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
-	      CURLOPT_POSTFIELDS => "{\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"name\": \"$code\",\n    \"model\": \"$modelValue\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n \"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n   \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ],\n  \"variationBarcodes\": [{\n  \t\t\"barcodeId\":3,\n  \t\t\"code\": \"$barcode\"\n  \t}]\n}",
+	      CURLOPT_POSTFIELDS => "{\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"name\": \"$code\",\n    \"model\": \"$modelValue\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n \"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n   \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ],\n  \"variationBarcodes\": [{\n  \t\t\"barcodeId\":3,\n  \t\t\"code\": \"$barcode\"\n  \t}],\n  \"variationSalesPrices\":[{\n  \"salesPriceId\": 1,\n  \"price\": $salePrice\n  },{\n  \"salesPriceId\": 2,\n  \"price\": $salePriceRRP\n  }]\n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
@@ -605,7 +608,44 @@ class ContentController extends Controller
 	    }
 	}
 
-	
+	public function salesPrice($variationId, $items){
+	    $login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+	    $curl = curl_init();
+		$salePrice = $items['streetPrice'];
+		    if(!empty($items['suggestedPrice'])){
+		      $salePrice = $items['suggestedPrice'];
+		    }
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/variations/variation_sales_prices",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 90000000,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "[{\n\t\"variationId\": $variationId,\n\t\"salesPriceId\": 2,\n\t\"price\": $salePrice\n}]",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer $access_token",
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  //echo $response;
+		}
+	}
 
 	public function getManufacturer($items){
 	    
@@ -623,8 +663,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
 		    "authorization: Bearer ".$this->access_token,
-		    "cache-control: no-cache",
-		    "postman-token: aff4e99b-1b4f-d79b-6c95-baf82b111e3b"
+		    "cache-control: no-cache"
 		  ),
 		));
 
