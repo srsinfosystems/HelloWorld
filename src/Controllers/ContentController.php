@@ -129,7 +129,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -158,7 +158,6 @@ class ContentController extends Controller
 	}
 	public function login($host){
 
-	    $host = $_SERVER['HTTP_HOST'];
 	    $curl = curl_init();
 	    curl_setopt_array($curl, array(
 	      CURLOPT_URL => "https://".$host."/rest/login",
@@ -196,7 +195,7 @@ class ContentController extends Controller
 	    $manufacturerId = $this->getManufacturer($items);
 	    $catId = $this->getCategory($items);
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -266,7 +265,7 @@ class ContentController extends Controller
 	  $requestdata = json_encode($requestdata);
 	  $curl = curl_init();
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/images/upload",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$ItemId."/images/upload",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -319,7 +318,7 @@ class ContentController extends Controller
 	    $size_id = $this->searchAttributeName('Size');
 	    $sizeValue = $this->searchAttributeValue($size_id,$model['size']);
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId."",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$itemId."/variations/".$variationId."",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -358,7 +357,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/attributes",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/attributes",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -396,7 +395,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/attributes/".$id."/values",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/attributes/".$id."/values",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -437,7 +436,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/attributes/".$id."/values",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/attributes/".$id."/values",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -474,7 +473,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/attribute_values/".$valueId."/names",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/attribute_values/".$valueId."/names",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -539,7 +538,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$itemId."/variations",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -579,7 +578,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
+	      CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -615,7 +614,7 @@ class ContentController extends Controller
 		if(empty($brand))return;
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/manufacturers?name=".$brand,
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/manufacturers?name=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -651,7 +650,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/manufacturers",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/manufacturers",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -709,7 +708,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/categories/?name=".$catName,
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/categories/?name=".$catName,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -741,7 +740,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/categories",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/categories",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -781,7 +780,7 @@ class ContentController extends Controller
 			$qty = $model['availability'];
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -813,7 +812,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId,
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$itemId."/variations/".$variationId,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -845,7 +844,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/item_shipping_profiles",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/".$ItemId."/item_shipping_profiles",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
