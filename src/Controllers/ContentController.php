@@ -113,7 +113,6 @@ class ContentController extends Controller
 	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 	            $this->ActivateShippingProf($arritem['itemId']);
 
-	           exit;
 	        }
 	       
 	      }		
@@ -567,7 +566,7 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
-	      echo  $response;
+	      
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
 		  if(!empty($vid)) {
@@ -810,7 +809,7 @@ class ContentController extends Controller
 	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
 		    
 			$curl = curl_init();
-			echo $dt = date('c', time());
+			$dt = date('c', time());
 			$currency = $items['currency'];
 			$purchasePrice = "0.00";
 			$qty = $model['availability'];
