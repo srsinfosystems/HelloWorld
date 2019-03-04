@@ -40,12 +40,12 @@ class ContentController extends Controller
 		//echo $_REQUEST;
 		$brand = $_GET['brand'];		
 		
-		$host = $_SERVER['HTTP_HOST'];
+		echo $host = $_SERVER['HTTP_HOST'];echo "==";
 		$login = $this->login($host);
 		$login = json_decode($login, true);
-		$this->access_token = $login['access_token'];
-		$this->plentyhost = "https://".$host;
-		$this->drophost = "https://www.brandsdistribution.com";
+		echo $this->access_token = $login['access_token'];echo "==";
+		echo $this->plentyhost = "https://".$host;echo "==";
+		echo $this->drophost = "https://www.brandsdistribution.com";echo "==";exit;
 
 		$flag = $this->getAllItems($brand);	
 
