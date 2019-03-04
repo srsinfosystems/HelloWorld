@@ -112,7 +112,7 @@ class ContentController extends Controller
 	            $this->uploadImages($items, $arritem);
 	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
 	            $this->ActivateShippingProf($arritem['itemId']);
-
+	            $i++;
 	        }
 	       
 	      }		
