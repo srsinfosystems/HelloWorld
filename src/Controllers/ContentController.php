@@ -33,8 +33,8 @@ class ContentController extends Controller
 	public function importProduct(Twig $twig):string
 	{
 		//echo $_REQUEST;
-		echo $_POST['brand'];exit;
-		$brand = $_GET['brand'];		
+		echo "=====".$_POST['brand'];exit;
+		//$brand = $_GET['brand'];		
 		
 		$flag = $this->getAllItems($brand);		
 		exit;
