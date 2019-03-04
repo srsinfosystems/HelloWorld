@@ -307,7 +307,10 @@ class ContentController extends Controller
 	    # get id of color
 	    $purchasePrice = 0;
 	    $avgPrice = 0;
-	    
+	    $salePriceRRP = $streetPrice;
+	    $salePrice = 0;
+	    if(!empty($suggestedPrice))
+	      $salePrice = $suggestedPrice;
 	    $weight = 0;
 	    if (!empty($items['weight'])) {
 	        $weight = $items['weight'] * 1000;
@@ -324,7 +327,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "PUT",
-	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n    \"weightG\": $weight, \n    \"weightNetG\": $weight\n}",
+	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n    \"weightG\": $weight, \n    \"weightNetG\": $weight,\n 	\"variationSalesPrices\":[{\n  \"salesPriceId\": 1,\n  \"price\": $salePrice\n  },{\n  \"salesPriceId\": 2,\n  \"price\": $salePriceRRP\n  }]}",
 	      CURLOPT_HTTPHEADER => array(
 	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
