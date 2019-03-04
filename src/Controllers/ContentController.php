@@ -61,7 +61,7 @@ class ContentController extends Controller
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => $this->drophost."/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
+		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -93,7 +93,7 @@ class ContentController extends Controller
 	        foreach ($array['items']['item'] as $items) {
 
 	            $arritem = $this->createItem($items);
-	             echo json_encode($arritem);echo "==========";
+	             // echo json_encode($arritem);
 
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
