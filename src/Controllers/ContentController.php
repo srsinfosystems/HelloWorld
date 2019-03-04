@@ -40,12 +40,12 @@ class ContentController extends Controller
 		//echo $_REQUEST;
 		$brand = $_GET['brand'];		
 		
-		echo $host = $_SERVER['HTTP_HOST'];echo "==";
+		$host = $_SERVER['HTTP_HOST'];
 		$login = $this->login($host);
 		$login = json_decode($login, true);
-		echo $this->access_token = $login['access_token'];echo "==";
-		echo $this->plentyhost = "https://".$host;echo "==";
-		echo $this->drophost = "https://www.brandsdistribution.com";echo "==";exit;
+		$this->access_token = $login['access_token'];
+		$this->plentyhost = "https://".$host;
+		$this->drophost = "https://www.brandsdistribution.com";
 
 		$flag = $this->getAllItems($brand);	
 
@@ -93,7 +93,7 @@ class ContentController extends Controller
 	        foreach ($array['items']['item'] as $items) {
 
 	            $arritem = $this->createItem($items);
-	             // echo json_encode($arritem);
+	             echo json_encode($arritem);echo "==========";
 
 	            if(empty($arritem['variationId'])) continue;
 	            // Activate item
