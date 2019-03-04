@@ -35,7 +35,8 @@ class ContentController extends Controller
 		//echo $_REQUEST;
 		$brand = $_GET['brand'];		
 		
-		$flag = $this->getAllItems($brand);		
+		$flag = $this->getAllItems($brand);	
+			
 		exit;
 		/*if ($flag == 1) 
 			$data = "Items created successfully.";
