@@ -36,7 +36,7 @@ class ContentController extends Controller
 		$brand = $_GET['brand'];		
 		
 		$flag = $this->getAllItems($brand);	
-			
+
 		exit;
 		/*if ($flag == 1) 
 			$data = "Items created successfully.";
@@ -98,8 +98,9 @@ class ContentController extends Controller
 	            $discription = $this->ItemDiscription($arritem['itemId'], $arritem['variationId'], $items['name'], '');
 	            $this->uploadImages($items, $arritem);
 	            $this->createSubVariation($arritem['itemId'], $arritem['variationId'], $items);
+	            $this->ActivateShippingProf($arritem['itemId']);
 
-	           // exit;
+	           exit;
 	        }
 	       
 	      }		
@@ -927,6 +928,42 @@ class ContentController extends Controller
 		  echo "cURL Error #:" . $err;
 		} else {
 		  // echo $response;
+		}
+	}
+
+	public function ActivateShippingProf($ItemId){
+		$login = $this->login();
+	    $login = json_decode($login, true);
+	    $access_token = $login['access_token'];
+	    $host = $_SERVER['HTTP_HOST'];
+
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/item_shipping_profiles",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => "{\n    \"profileId\": 6\n}",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer ".$access_token,
+		    "cache-control: no-cache",
+		    "content-type: application/json"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+		  echo $response;
 		}
 	}
 }
