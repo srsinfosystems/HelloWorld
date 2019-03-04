@@ -609,18 +609,14 @@ class ContentController extends Controller
 	}
 
 	public function salesPrice($variationId, $items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 		$salePrice = $items['streetPrice'];
 		    if(!empty($items['suggestedPrice'])){
 		      $salePrice = $items['suggestedPrice'];
 		    }
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/variations/variation_sales_prices",
+		  CURLOPT_URL => "https://".$this->plentyhost."/rest/items/variations/variation_sales_prices",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -629,7 +625,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "[{\n\t\"variationId\": $variationId,\n\t\"salesPriceId\": 2,\n\t\"price\": $salePrice\n}]",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
