@@ -10,6 +10,11 @@ use Plenty\Plugin\Templates\Twig;
  */
 class ContentController extends Controller
 {
+
+	public $access_token;
+	public $plentyhost;
+	public $drophost;
+
 	/**
 	 * @param Twig $twig
 	 * @return string
@@ -35,6 +40,13 @@ class ContentController extends Controller
 		//echo $_REQUEST;
 		$brand = $_GET['brand'];		
 		
+		$host = $_SERVER['HTTP_HOST'];
+		$login = $this->login($host);
+		$login = json_decode($login, true);
+		$this->access_token = $login['access_token'];
+		$this->plentyhost = "https://".$host;
+		$this->drophost = "https://www.brandsdistribution.com";
+
 		$flag = $this->getAllItems($brand);	
 
 		exit;
@@ -45,10 +57,11 @@ class ContentController extends Controller
 		//return $twig->render('HelloWorld::content.importProduct');
 	}
 	public function getAllItems($brand){
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://www.brandsdistribution.com/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
+		  CURLOPT_URL => $this->drophost."/restful/export/api/products.xml?Accept=application%2Fxml&tag_1=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -111,15 +124,12 @@ class ContentController extends Controller
 	}
 
 	public function linkingBarcode($ItemId, $variationId, $code){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
+	    
 
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/variations/".$variationId."/variation_barcodes",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -128,7 +138,7 @@ class ContentController extends Controller
 	      CURLOPT_CUSTOMREQUEST => "POST",
 	      CURLOPT_POSTFIELDS => "{\n    \"barcodeId\": 3,\n    \"code\": \"$code\"\n}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      )
@@ -146,7 +156,7 @@ class ContentController extends Controller
 	      return $response;
 	    }
 	}
-	public function login(){
+	public function login($host){
 
 	    $host = $_SERVER['HTTP_HOST'];
 	    $curl = curl_init();
@@ -178,11 +188,7 @@ class ContentController extends Controller
 	    }
 	}
 	public function createItem($items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 	    if(empty($items)) return "";
 	    $title = $items['name'];
@@ -190,7 +196,7 @@ class ContentController extends Controller
 	    $manufacturerId = $this->getManufacturer($items);
 	    $catId = $this->getCategory($items);
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items",
+	      CURLOPT_URL => "https://".$this->host."/rest/items",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -200,7 +206,7 @@ class ContentController extends Controller
 	      CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId\n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "accept: application/json",
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      )
@@ -244,10 +250,7 @@ class ContentController extends Controller
 	}
 
 	public function uploadImage($ItemId, $image, $imagevalue){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
+	    
 	    $img = $image;
 	    $imgName = explode("/",$img);
 
@@ -263,7 +266,7 @@ class ContentController extends Controller
 	  $requestdata = json_encode($requestdata);
 	  $curl = curl_init();
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/images/upload",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/images/upload",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -272,7 +275,7 @@ class ContentController extends Controller
 	      CURLOPT_CUSTOMREQUEST => "POST",
 	      CURLOPT_POSTFIELDS => $requestdata,
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      )
@@ -291,11 +294,7 @@ class ContentController extends Controller
 	}
 
 	public function ActiveItem($itemId, $variationId, $items ){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 	    $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
 
@@ -320,7 +319,7 @@ class ContentController extends Controller
 	    $size_id = $this->searchAttributeName('Size');
 	    $sizeValue = $this->searchAttributeValue($size_id,$model['size']);
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId."",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -329,7 +328,7 @@ class ContentController extends Controller
 	      CURLOPT_CUSTOMREQUEST => "PUT",
 	      CURLOPT_POSTFIELDS => "{\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"model\": \"$model\",\n    \"name\": \"$code\",\n    \"itemId\":\"$itemId\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n \"mainWarehouseId\": 104,\n\"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n    \"weightG\": $weight, \n    \"weightNetG\": $weight\n}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      ),
@@ -355,15 +354,11 @@ class ContentController extends Controller
 	  }
 
 	public function searchAttributeName($name) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/attributes",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/attributes",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -371,7 +366,7 @@ class ContentController extends Controller
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "GET",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	      ),
 	    ));
@@ -397,15 +392,11 @@ class ContentController extends Controller
 	}
 
 	public function searchAttributeValue($id,$value) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/attributes/".$id."/values",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -413,7 +404,7 @@ class ContentController extends Controller
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "GET",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer $access_token",
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	      ),
 	    ));
@@ -443,15 +434,10 @@ class ContentController extends Controller
 
 	public function createAttributeValue($id,$value) {
 
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
 	    $curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/attributes/".$id."/values",
+		  CURLOPT_URL => "https://".$this->host."/rest/items/attributes/".$id."/values",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -460,7 +446,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n    \"attributeId\": $id,\n    \"backendName\": \"$value\"\n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		  ),
@@ -484,15 +470,11 @@ class ContentController extends Controller
 	}
 
 	public function setValueName($valueId, $lang, $name) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/attribute_values/".$valueId."/names",
+		  CURLOPT_URL => "https://".$this->host."/rest/items/attribute_values/".$valueId."/names",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -501,7 +483,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n    \"valueId\": $valueId,\n    \"lang\": \"$lang\",\n    \"name\": \"$name\"\n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		  ),
@@ -522,11 +504,7 @@ class ContentController extends Controller
 	}
 
 	public function createSubVariation($itemId, $variationId, $items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $models = array();
 	    if(isset($items['models']['model']['availability'])) {
 	      return;
@@ -561,7 +539,7 @@ class ContentController extends Controller
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -570,7 +548,7 @@ class ContentController extends Controller
 	      CURLOPT_CUSTOMREQUEST => "POST",
 	      CURLOPT_POSTFIELDS => "{\n    \"itemId\": $itemId,\n    \"isActive\": true,\n    \"purchasePrice\": $purchasePrice,\n    \"name\": \"$code\",\n    \"model\": \"$modelValue\",\n    \"number\": \"$id\",\n    \"availability\": $availability,\n    \"movingAveragePrice\": $avgPrice,\n    \"mainWarehouseId\": 104,\n    \"unit\": {\n        \"unitId\": 1,\n        \"content\": 1\n    },\n \"variationAttributeValues\": [\n        {\n            \"valueId\": $colorValue\n        },\n        {\n            \"valueId\": $sizeValue\n        }\n        ],\n   \"variationClients\": [\n        {\n            \"plentyId\": 42296\n        }\n  ],\n  \"variationBarcodes\": [{\n  \t\t\"barcodeId\":3,\n  \t\t\"code\": \"$barcode\"\n  \t}]\n}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer ".$access_token,
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      ),
@@ -597,15 +575,11 @@ class ContentController extends Controller
 	}
 
 	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
-	      CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
+	      CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId."/descriptions",
 	      CURLOPT_RETURNTRANSFER => true,
 	      CURLOPT_ENCODING => "",
 	      CURLOPT_MAXREDIRS => 10,
@@ -614,7 +588,7 @@ class ContentController extends Controller
 	      CURLOPT_CUSTOMREQUEST => "POST",
 	      CURLOPT_POSTFIELDS => "{\"itemId\": $itemId,\"lang\": \"en\",\"name\": \"$ItemName\",\"description\": \"$discription\"}",
 	      CURLOPT_HTTPHEADER => array(
-	        "authorization: Bearer ".$access_token,
+	        "authorization: Bearer ".$this->access_token,
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      ),
@@ -635,17 +609,13 @@ class ContentController extends Controller
 	
 
 	public function getManufacturer($items){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 		$curl = curl_init();
 		$brand = $items['brand'];
 		if(empty($brand))return;
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers?name=".$brand,
+		  CURLOPT_URL => "https://".$this->host."/rest/items/manufacturers?name=".$brand,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -653,7 +623,7 @@ class ContentController extends Controller
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "postman-token: aff4e99b-1b4f-d79b-6c95-baf82b111e3b"
 		  ),
@@ -677,14 +647,11 @@ class ContentController extends Controller
 	}
 
 	public function creatManufacturer($brand){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
+	    
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/manufacturers",
+		  CURLOPT_URL => "https://".$this->host."/rest/items/manufacturers",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -693,7 +660,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n\t\"name\": \"$brand\"\n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
@@ -738,15 +705,11 @@ class ContentController extends Controller
 	}
 
 	public function searchCategory($catName){
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/categories/?name=".$catName,
+		  CURLOPT_URL => "https://".$this->host."/rest/categories/?name=".$catName,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -754,7 +717,7 @@ class ContentController extends Controller
 		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		  CURLOPT_CUSTOMREQUEST => "GET",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		  ),
 		));
@@ -774,15 +737,11 @@ class ContentController extends Controller
 	}
 
 	public function createCategory($name) {
-	    $login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+	    
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/categories",
+		  CURLOPT_URL => "https://".$this->host."/rest/categories",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -791,7 +750,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "[\n        {\n            \"parentCategoryId\": null,\n            \"type\": \"item\",\n            \"right\": \"all\",\n            \"details\": [\n                {\n                    \"plentyId\": 42296,\n                    \"lang\": \"en\",\n                    \"name\": \"$name\"\n                }\n            ],\n            \"clients\": [\n                {\n                    \"plentyId\": 42296\n                }\n            ]\n        }\n    ]",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		  ),
@@ -814,11 +773,7 @@ class ContentController extends Controller
 	}
 
 	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
-		    $login = $this->login();
-		    $login = json_decode($login, true);
-		    $access_token = $login['access_token'];
-		    $host = $_SERVER['HTTP_HOST'];
-
+		    
 			$curl = curl_init();
 			echo $dt = date('c', time());
 			$currency = $items['currency'];
@@ -826,7 +781,7 @@ class ContentController extends Controller
 			$qty = $model['availability'];
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
+		  CURLOPT_URL => "https://".$this->host."/rest/items/".$itemsId."/variations/".$variationId."/stock/bookIncomingItems",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -835,7 +790,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_POSTFIELDS => "{\n    \"warehouseId\": 104,\n    \"deliveredAt\": \"$dt\",\n    \"currency\": \"$currency\",\n    \"quantity\": $qty,\n    \"purchasePrice\":$purchasePrice,\n    \"reasonId\": 101\n\n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json",
 		  ),
@@ -854,14 +809,11 @@ class ContentController extends Controller
   	}
 
 	public function activateSubVariation($itemId, $variationId){
-		$login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
+		
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$itemId."/variations/".$variationId,
+		  CURLOPT_URL => "https://".$this->host."/rest/items/".$itemId."/variations/".$variationId,
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -870,7 +822,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "PUT",
 		  CURLOPT_POSTFIELDS => "{\n    \"isActive\": true\n   \n    \n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer $access_token",
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
@@ -889,15 +841,11 @@ class ContentController extends Controller
 	}
 
 	public function ActivateShippingProf($ItemId){
-		$login = $this->login();
-	    $login = json_decode($login, true);
-	    $access_token = $login['access_token'];
-	    $host = $_SERVER['HTTP_HOST'];
-
+		
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-		  CURLOPT_URL => "https://".$host."/rest/items/".$ItemId."/item_shipping_profiles",
+		  CURLOPT_URL => "https://".$this->host."/rest/items/".$ItemId."/item_shipping_profiles",
 		  CURLOPT_RETURNTRANSFER => true,
 		  CURLOPT_ENCODING => "",
 		  CURLOPT_MAXREDIRS => 10,
@@ -906,7 +854,7 @@ class ContentController extends Controller
 		  CURLOPT_CUSTOMREQUEST => "POST",
 		  CURLOPT_POSTFIELDS => "{\n    \"profileId\": 6\n}",
 		  CURLOPT_HTTPHEADER => array(
-		    "authorization: Bearer ".$access_token,
+		    "authorization: Bearer ".$this->access_token,
 		    "cache-control: no-cache",
 		    "content-type: application/json"
 		  ),
@@ -920,7 +868,7 @@ class ContentController extends Controller
 		if ($err) {
 		  echo "cURL Error #:" . $err;
 		} else {
-		  echo $response;
+		  //echo $response;
 		}
 	}
 }
