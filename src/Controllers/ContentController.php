@@ -20,14 +20,14 @@ class ContentController extends Controller
 	 * @return string
 	 */
 	public function home(Twig $twig):string
-	{	
+	{
 		$message = $_GET['message'];
 		if (!empty($message)) {
 			return $twig->render('HelloWorld::content.mainView',array('data' => "success"));
 		}else{
 			return $twig->render('HelloWorld::content.mainView');
 		}
-		
+
 
 	}
 	public function sayHello(Twig $twig):string
@@ -38,8 +38,8 @@ class ContentController extends Controller
 	public function importProduct(Twig $twig):string
 	{
 		//echo $_REQUEST;
-		$brand = $_GET['brand'];		
-		
+		$brand = $_GET['brand'];
+
 		$host = $_SERVER['HTTP_HOST'];
 		$login = $this->login($host);
 		$login = json_decode($login, true);
@@ -47,10 +47,10 @@ class ContentController extends Controller
 		$this->plentyhost = "https://".$host;
 		$this->drophost = "https://www.brandsdistribution.com";
 
-		$flag = $this->getAllItems($brand);	
+		$flag = $this->getAllItems($brand);
 
 		exit;
-		/*if ($flag == 1) 
+		/*if ($flag == 1)
 			$data = "Items created successfully.";
 		else
 			$data = "Somthing went wrong.";*/
@@ -83,14 +83,22 @@ class ContentController extends Controller
 		if ($err) {
 		  return "cURL Error #:" . $err;
 		} else {
-		  	
-			$xml = simplexml_load_string($response); 
+
+			$xml = simplexml_load_string($response);
 	        $json = json_encode($xml);
-	        $array = json_decode($json,TRUE); 
-	      	   
-	      	   $i= 0;  	      
+	        $array = json_decode($json,TRUE);
+
+	      	$i= 0;
+	      	 $manufacturerId = $this->getManufacturerId($brand);
+			  if(!empty($manufacturerId)) {
+				$variations = $this->getManufacturerVariations($manufacturerId);
+			  }
 	      if (is_array($array['items']['item'])) {
 	        foreach ($array['items']['item'] as $items) {
+				$availability = $this->checkAvailability($items, $variations);
+				if($availability == "1") {
+				 continue;
+				}
 
 	            $arritem = $this->createItem($items);
 	             // echo json_encode($arritem);
@@ -114,8 +122,8 @@ class ContentController extends Controller
 	            $this->ActivateShippingProf($arritem['itemId']);
 	            $i++;
 	        }
-	       
-	      }		
+
+	      }
 
 	       echo "Total item inserted: ".$i;
 	       echo "<br>Please use browser's back button to go back on brand selection page";
@@ -123,7 +131,7 @@ class ContentController extends Controller
 	}
 
 	public function linkingBarcode($ItemId, $variationId, $code){
-	    
+
 
 	    $curl = curl_init();
 
@@ -141,7 +149,7 @@ class ContentController extends Controller
 	        "cache-control: no-cache",
 	        "content-type: application/json"
 	      )
-	      
+
 	    ));
 
 	    $response = curl_exec($curl);
@@ -185,7 +193,7 @@ class ContentController extends Controller
 	    }
 	}
 	public function createItem($items){
-	    
+
 	    $curl = curl_init();
 	    if(empty($items)) return "";
 	    $title = $items['name'];
@@ -247,7 +255,7 @@ class ContentController extends Controller
 	}
 
 	public function uploadImage($ItemId, $image, $imagevalue){
-	    
+
 	    $img = $image;
 	    $imgName = explode("/",$img);
 
@@ -291,7 +299,7 @@ class ContentController extends Controller
 	}
 
 	public function ActiveItem($itemId, $variationId, $items ){
-	    
+
 	    $curl = curl_init();
 	    $model = isset($items['models']['model']['availability'])?$items['models']['model']:$items['models']['model'][0];
 
@@ -308,7 +316,7 @@ class ContentController extends Controller
 	    $avgPrice = 0;
 	    $salePriceRRP = $streetPrice;
 	    $salePrice = $suggestedPrice;
-	    
+
 	    $weight = 0;
 	    if (!empty($items['weight'])) {
 	        $weight = $items['weight'] * 1000;
@@ -353,7 +361,7 @@ class ContentController extends Controller
 	  }
 
 	public function searchAttributeName($name) {
-	    
+
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -391,7 +399,7 @@ class ContentController extends Controller
 	}
 
 	public function searchAttributeValue($id,$value) {
-	    
+
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -469,7 +477,7 @@ class ContentController extends Controller
 	}
 
 	public function setValueName($valueId, $lang, $name) {
-	    
+
 	    $curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -503,7 +511,7 @@ class ContentController extends Controller
 	}
 
 	public function createSubVariation($itemId, $variationId, $items){
-	    
+
 	    $models = array();
 	    if(isset($items['models']['model']['availability'])) {
 	      return;
@@ -533,7 +541,7 @@ class ContentController extends Controller
 	    $salePrice = 0;
 	    if(!empty($suggestedPrice))
 	      $salePrice = $suggestedPrice;
-	    
+
 	    $name_id = $this->searchAttributeName('Colour');
 	    $colorValue = $this->searchAttributeValue($name_id,$model['color']);
 	    $size_id = $this->searchAttributeName('Size');
@@ -566,7 +574,7 @@ class ContentController extends Controller
 	      echo "cURL Error #: $id " . $err;
 	    }
 	    else {
-	      
+
 	      $response = json_decode($response, TRUE);
 		  $vid =  $response['id'];
 		  if(!empty($vid)) {
@@ -578,7 +586,7 @@ class ContentController extends Controller
 	}
 
 	public function ItemDiscription($itemId, $variationId, $ItemName, $discription){
-	    
+
 	    $curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -610,11 +618,11 @@ class ContentController extends Controller
 	}
 
 	public function salesPrice($variationId, $items){
-	    
+
 	    $curl = curl_init();
 		$salePriceRRP = $items['streetPrice'];
 		$salePrice = $items['suggestedPrice'];
-		   
+
 		curl_setopt_array($curl, array(
 		  CURLOPT_URL => $this->plentyhost."/rest/items/variations/variation_sales_prices",
 		  CURLOPT_RETURNTRANSFER => true,
@@ -644,7 +652,7 @@ class ContentController extends Controller
 	}
 
 	public function getManufacturer($items){
-	    
+
 		$curl = curl_init();
 		$brand = $items['brand'];
 		if(empty($brand))return;
@@ -681,7 +689,7 @@ class ContentController extends Controller
 	}
 
 	public function creatManufacturer($brand){
-	    
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -739,7 +747,7 @@ class ContentController extends Controller
 	}
 
 	public function searchCategory($catName){
-	    
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -771,7 +779,7 @@ class ContentController extends Controller
 	}
 
 	public function createCategory($name) {
-	    
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -807,7 +815,7 @@ class ContentController extends Controller
 	}
 
 	public function bookIncomingStock($itemsId, $variationId, $items, $model) {
-		    
+
 			$curl = curl_init();
 			$dt = date('c', time());
 			$currency = $items['currency'];
@@ -843,7 +851,7 @@ class ContentController extends Controller
   	}
 
 	public function activateSubVariation($itemId, $variationId){
-		
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -875,7 +883,7 @@ class ContentController extends Controller
 	}
 
 	public function ActivateShippingProf($ItemId){
-		
+
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -905,4 +913,96 @@ class ContentController extends Controller
 		  //echo $response;
 		}
 	}
+	public function getManufacturerId($brand) {
+		$curl = curl_init();
+
+		curl_setopt_array($curl, array(
+	  CURLOPT_URL => $this->plentyhost."/rest/items/manufacturers?name=".$brand,
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "GET",
+	  CURLOPT_HTTPHEADER => array(
+		"authorization: Bearer $access_token",
+		"cache-control: no-cache",
+		"content-type: application/json",
+	  ),
+	));
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+
+	curl_close($curl);
+
+	if ($err) {
+	  echo "cURL Error #:" . $err;
+	} else {
+
+	  $response =json_decode($response,true);
+	  if(!empty($response) && isset($response['entries'][0]['id']))
+		return $response['entries'][0]['id'];
+	  else
+		return "";
+	}
+	}
+
+	public function getManufacturerVariations($manufacturerId) {
+		$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => $this->plentyhost."/rest/items/variations?manufacturerId=".$manufacturerId."&isActive=true",
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "GET",
+	  CURLOPT_HTTPHEADER => array(
+		"authorization: Bearer $access_token",
+		"cache-control: no-cache",
+		"content-type: application/json",
+	  ),
+	));
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+
+	curl_close($curl);
+
+	if ($err) {
+	  echo "cURL Error #:" . $err;
+	} else {
+	  $response =json_decode($response,true);
+	  if(empty($response) || empty($response['entries'])) return;
+	  $variations = array();
+	  foreach($response['entries'] as $entries) {
+		  $number = $entries['number'];
+		$variations[$number] = $entries['id'];
+	  }
+	  return $variations;
+	}
+}
+
+public function checkAvailability($items, $variations) {
+	$models = array();
+    if(isset($items['models']['model']['availability'])) {
+      if(array_key_exists($items['models']['model']['id'], $variations)) {
+		return "1";
+	  }
+    }
+    else {
+		$found = "2";
+      for($i=0; $i<count($items['models']['model']); $i++) {
+		if(array_key_exists($items['models']['model'][$i]['id'], $variations)) {
+			$found = "1"; break;
+		}
+
+      }
+      return $found;
+
+    }
+}
+
 }
