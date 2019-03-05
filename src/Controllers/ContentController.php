@@ -925,7 +925,7 @@ class ContentController extends Controller
 	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	  CURLOPT_CUSTOMREQUEST => "GET",
 	  CURLOPT_HTTPHEADER => array(
-		"authorization: Bearer $access_token",
+		"authorization: Bearer ".$this->access_token,
 		"cache-control: no-cache",
 		"content-type: application/json",
 	  ),
@@ -960,7 +960,7 @@ class ContentController extends Controller
 	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	  CURLOPT_CUSTOMREQUEST => "GET",
 	  CURLOPT_HTTPHEADER => array(
-		"authorization: Bearer $access_token",
+		"authorization: Bearer ".$this->access_token,
 		"cache-control: no-cache",
 		"content-type: application/json",
 	  ),
