@@ -208,7 +208,7 @@ class ContentController extends Controller
 	      CURLOPT_TIMEOUT => 90000000,
 	      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	      CURLOPT_CUSTOMREQUEST => "POST",
-	      CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId,\n \n\"flagTwo\":2 \n}",
+	      CURLOPT_POSTFIELDS => "{\n\t\"title\": \"$title\",\n\t\"stockType\": 0,\n\t\"variations\": [{\n\t\t\"variationCategories\": [{\n\t\t\t\"categoryId\": $catId\n\t\t}],\n\t\t\"unit\": {\n\t\t\t\"unitId\": 1,\n\t\t\t\"content\": 1\n\t\t}\n\t}],\n\t\"manufacturerId\": $manufacturerId,\n \n\"flagTwo\":3 \n}",
 	      CURLOPT_HTTPHEADER => array(
 	        "accept: application/json",
 	        "authorization: Bearer ".$this->access_token,
