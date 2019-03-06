@@ -515,7 +515,6 @@ class ContentController extends Controller
 
 	    $models = array();
 	    if(isset($items['models']['model']['availability'])) {
-	      return;
 	      $models[] = $items['models']['model'];
 	    }
 	    else {
